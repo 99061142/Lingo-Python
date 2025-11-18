@@ -42,3 +42,9 @@ def initialize_teams_data() -> None:
     for teamID in range(teams_amount):
         initial_team_data = get_initial_team_data(teamID)
         teamsData.append(initial_team_data)
+
+"""
+    Prints a message to the terminal with optional color.
+"""
+def print_message(message: str, color: str = None) -> None:
+    print("\n" + colored(message, color) + "\n")
