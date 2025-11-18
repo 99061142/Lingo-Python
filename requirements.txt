@@ -1,0 +1,2 @@
+# Needed to color terminal output.
+termcolor
