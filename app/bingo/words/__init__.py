@@ -1,0 +1,1 @@
+# This file makes all bingo.words files accessible as an importable module.
