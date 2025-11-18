@@ -1,5 +1,6 @@
 from .bingo.bingo_utils import create_randomized_bingo_board
 from .teamsData import teamsData
+from termcolor import colored
 
 """
     Returns the initial data structure for a single team with the given teamID.
@@ -17,7 +18,16 @@ def get_initial_team_data(teamID: int) -> dict:
                 "numbers": 0
             }
         },
-        "roundsInfo": [],
+        "roundsInfo": [
+            {
+                "guesses": [],
+                "guessesColor": [
+                    [
+                        "green"
+                    ]
+                ] 
+            } # We set the first letter green when the round starts. This is why the `guesses` is empty even if `guessesColor` has one entry.
+        ],
         "hasWon": False,
         "ID": teamID
     }
