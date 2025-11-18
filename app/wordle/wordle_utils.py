@@ -17,3 +17,15 @@ def get_random_word() -> str:
         if word not in _unavailable_words:
             _unavailable_words.add(word)
             return word
+
+"""
+    Validate if the provided word is a valid five-letter word, and is a word which is an option for the user to guess.
+"""
+def is_valid_guess(guess: str) -> bool:
+    if len(guess) != 5:
+        return False
+    
+    if guess not in five_letter_words.words:
+        return False
+    
+    return True
