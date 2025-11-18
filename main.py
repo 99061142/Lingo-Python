@@ -1,5 +1,8 @@
-from app.wordle.wordle import start_game
+from app.app import start_game
 
+"""
+    Start the Lingo game application.
+"""
 def main() -> None:
     start_game()
 
