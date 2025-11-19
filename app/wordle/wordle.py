@@ -19,8 +19,8 @@ def ask_user_guess(current_row: int) -> str:
 """"
     Print the current Wordle board for the specified team.
 """
-def show_wordle_board(current_team_ID: int, max_attempts: int, word_to_guess_length: int, word_to_guess: str) -> None:
-    stringified_wordle_board = get_stringified_wordle_board(current_team_ID, max_attempts, word_to_guess_length, word_to_guess)
+def show_wordle_board(team_ID: int) -> None:
+    stringified_wordle_board = get_stringified_wordle_board(team_ID)
     print(stringified_wordle_board)
 
 """
