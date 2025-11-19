@@ -1,47 +1,36 @@
 from .bingo.bingo_utils import create_randomized_bingo_board
-from .teamsData import teamsData
+from .teams_data import teams_data
 from termcolor import colored
+from .constants import TEAMS_AMOUNT
 
 """
     Returns the initial data structure for a single team with the given teamID.
 """
-def get_initial_team_data(teamID: int) -> dict:
+def get_initial_team_data(team_ID: int) -> dict:
     initial_team_data = {
         "bingoBoard": {
-            "board": create_randomized_bingo_board(teamID),
+            "board": create_randomized_bingo_board(team_ID),
             "filledPositions": []
         },
         "balls": {
             "grabbed": {
                 "green": 0,
-                "red": 0,
-                "numbers": 0
+                "red": 0
             }
         },
-        "roundsInfo": [
-            {
-                "guesses": [],
-                "guessesColor": [
-                    [
-                        "green"
-                    ]
-                ] 
-            } # We set the first letter green when the round starts. This is why the `guesses` is empty even if `guessesColor` has one entry.
-        ],
+        "roundsInfo": [],
         "hasWon": False,
-        "ID": teamID
+        "ID": team_ID
     }
     return initial_team_data
 
 """
-    Initializes the teamsData list with initial data for each team.
+    Initializes the teams_data list with initial data for each team.
 """
 def initialize_teams_data() -> None:
-    teams_amount = 2 # Currently supporting 2 teams.
-
-    for teamID in range(teams_amount):
-        initial_team_data = get_initial_team_data(teamID)
-        teamsData.append(initial_team_data)
+    for team_ID in range(TEAMS_AMOUNT):
+        initial_team_data = get_initial_team_data(team_ID)
+        teams_data.append(initial_team_data)
 
 """
     Prints a message to the terminal with optional color.
