@@ -36,4 +36,5 @@ def initialize_teams_data() -> None:
     Prints a message to the terminal with optional color.
 """
 def print_message(message: str, color: str = DEFAULT_TERMINAL_COLOR) -> None:
-    print("\n" + colored(message, color) + "\n")
+    colored_message = colored(message, color)
+    print(f"\n{colored_message}\n")
