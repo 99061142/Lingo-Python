@@ -2,8 +2,7 @@ from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from typing import Optional
-from ..constants import GAP_BETWEEN_LETTERS, WORD_TO_GUESS_LENGTH, MAX_ATTEMPTS
+from ..constants import DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, WORD_TO_GUESS_LENGTH, MAX_ATTEMPTS
 
 # Global Set to keep track of unavailable words.    
 # This will be used to avoid repeating words in the game.
@@ -49,15 +48,14 @@ def get_current_wordle_round_board(team_ID: int) -> list:
 
 """
     Return the color of a specific letter in the current round's Wordle board.
-    If the position is out of range, we return None. (Which defaults to the default terminal color.)
-    Else we return the color we have stored for that letter.
+    If the position is out of bounds, we return the default terminal color which we have set as a the constant `DEFAULT_TERMINAL_COLOR`.
 """
-def get_current_wordle_round_letter_color(team_ID: int, position: tuple) -> Optional[str]:
+def get_current_wordle_round_letter_color(team_ID: int, position: tuple) -> str:
     row, col = position
     current_wordle_round_guesses_color = get_current_wordle_round_guesses_color(team_ID)
 
     if row >= len(current_wordle_round_guesses_color) or col >= len(current_wordle_round_guesses_color[row]):
-        return None
+        return DEFAULT_TERMINAL_COLOR
     return current_wordle_round_guesses_color[row][col]
 
 def get_wordle_board_width() -> int:
