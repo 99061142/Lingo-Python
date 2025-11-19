@@ -5,9 +5,9 @@ from ..constants import STARTING_TEAM_ID, MAX_ATTEMPTS, TEAMS_AMOUNT
 """
     Let the user input their guess.
 """
-def ask_user_guess(current_row: int) -> str:
+def ask_user_guess(attempt_number: int) -> str:
     while True:
-        guess = input(f"Enter your 5-letter guess for row {current_row + 1}: ").strip().lower()
+        guess = input(f"Enter your 5-letter guess for row {attempt_number + 1}: ").strip().lower()
         guess_validation = is_valid_guess(guess)
 
         if guess_validation["isValid"]:
