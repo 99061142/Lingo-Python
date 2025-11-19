@@ -52,3 +52,5 @@ def play_wordle() -> None:
 
     while True:
         play_wordle_round_for_team(current_team_ID)
+
+        current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
