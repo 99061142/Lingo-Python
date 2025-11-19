@@ -205,12 +205,20 @@ def add_single_initial_rounds_info(team_ID: int) -> None:
 """
     Add a guess to the current round for a specific team, adding both the guess and its corresponding colors.
 """
-def add_guess_to_current_round(team_ID: int, guess: str, round_number: int) -> None:
+def add_guess_to_current_round(team_ID: int, guess: str, attempt_number: int) -> None:
     word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
     guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
     current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    current_wordle_round_info["guesses"][round_number] = guess
-    current_wordle_round_info["guessesColor"][round_number] = guess_colors
+    current_wordle_round_guesses = current_wordle_round_info["guesses"]
+
+    # If it's the first attempt, we remove the hint on the first row and replace it with the full guess.
+    if attempt_number == 0:
+        current_wordle_round_guesses[attempt_number] = guess
+        current_wordle_round_info["guessesColor"][attempt_number] = guess_colors
+        return
+
+    current_wordle_round_guesses.append(guess)
+    current_wordle_round_info["guessesColor"].append(guess_colors)
 
 
 ###
