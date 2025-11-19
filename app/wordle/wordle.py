@@ -27,16 +27,4 @@ def show_wordle_board(current_team_ID: int, max_attempts: int, word_to_guess_len
     Main function to play the Wordle game.
 """
 def play_wordle() -> None:
-    max_attempts = 5
-    word_to_guess = get_random_word()
-    word_to_guess_length = len(word_to_guess)
-
-    current_team_ID = 0 
-
-    while True:
-        for row in range(max_attempts):
-            show_wordle_board(current_team_ID, max_attempts, word_to_guess_length, word_to_guess)
-            
-            user_guess = ask_user_guess(row)
-
-        current_team_ID = (current_team_ID + 1) % len(teamsData) # Switch to the next team. If we exceed the number of teams, go back to team 0.
+    pass
