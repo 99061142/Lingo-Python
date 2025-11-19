@@ -2,7 +2,7 @@ from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from ..constants import DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, WORD_TO_GUESS_LENGTH, MAX_ATTEMPTS
+from ..constants import DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS
 
 # Global Set to keep track of unavailable words.    
 # This will be used to avoid repeating words in the game.
@@ -19,6 +19,9 @@ _unavailable_words = set()
     Do note that we also return empty rows for remaining attempts.
 """
 def get_current_wordle_round_board(team_ID: int) -> list:
+    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+    word_to_guess_length = len(word_to_guess)
+    
     wordle_board = []
     wordle_round_guesses = get_current_wordle_round_guesses(team_ID)
     guessed_amount = len(wordle_round_guesses)
@@ -31,8 +34,8 @@ def get_current_wordle_round_board(team_ID: int) -> list:
             # If the length of the guess is less than the word to guess length, we add remaining underscores.
             # We do this since at the start of the round, we hardcoded the first letter only.
             # Because of this, we do not have 5 values within the guess yet.
-            if length_of_guess < WORD_TO_GUESS_LENGTH:
-                guess += "_" * (WORD_TO_GUESS_LENGTH - length_of_guess)
+            if length_of_guess < word_to_guess_length:
+                guess += "_" * (word_to_guess_length - length_of_guess)
 
             wordle_board.append(list(guess))
 
@@ -40,7 +43,7 @@ def get_current_wordle_round_board(team_ID: int) -> list:
     missing_guesses_amount = MAX_ATTEMPTS - guessed_amount
     for _ in range(missing_guesses_amount):
         placeholder_guess = []
-        for _ in range(WORD_TO_GUESS_LENGTH):
+        for _ in range(word_to_guess_length):
             placeholder_guess.append("_")
         wordle_board.append(placeholder_guess)
 
@@ -58,17 +61,20 @@ def get_current_wordle_round_letter_color(team_ID: int, position: tuple) -> str:
         return DEFAULT_TERMINAL_COLOR
     return current_wordle_round_guesses_color[row][col]
 
-def get_wordle_board_width() -> int:
+def get_wordle_board_width(team_ID: int) -> int:
+    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+    word_to_guess_length = len(word_to_guess)
+
     amount_of_space_between_letters = GAP_BETWEEN_LETTERS
     col_width = amount_of_space_between_letters * 2 + 1 # Spaces on both sides + letter itself
-    board_width = WORD_TO_GUESS_LENGTH * col_width
+    board_width = word_to_guess_length * col_width
     return board_width
 
 """
     Return a stringified version of the Wordle board for display purposes.
 """
 def get_stringified_wordle_board(team_ID: int) -> str:
-    board_width = get_wordle_board_width()
+    board_width = get_wordle_board_width(team_ID)
 
     # Add text at the top of the board, which we also center
     title = "WORDLE BOARD"
