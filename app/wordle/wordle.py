@@ -49,8 +49,13 @@ def show_wordle_board(team_ID: int) -> None:
 """
 def play_wordle() -> None:
     current_team_ID = STARTING_TEAM_ID
+    board_width = get_wordle_board_width()
 
     while True:
+        # Display which team's turn it is
+        title = f"Team {current_team_ID + 1}'s turn"
+        print(f"\n{title.center(board_width)}\n")
+
         play_wordle_round_for_team(current_team_ID)
 
         current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
