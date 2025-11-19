@@ -1,7 +1,7 @@
 from .bingo.bingo_utils import create_randomized_bingo_board
 from .teams_data import teams_data
 from termcolor import colored
-from .constants import TEAMS_AMOUNT
+from .constants import DEFAULT_TERMINAL_COLOR, TEAMS_AMOUNT
 
 """
     Returns the initial data structure for a single team with the given teamID.
@@ -35,5 +35,5 @@ def initialize_teams_data() -> None:
 """
     Prints a message to the terminal with optional color.
 """
-def print_message(message: str, color: str = None) -> None:
+def print_message(message: str, color: str = DEFAULT_TERMINAL_COLOR) -> None:
     print("\n" + colored(message, color) + "\n")
