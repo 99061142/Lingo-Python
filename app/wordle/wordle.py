@@ -1,6 +1,6 @@
 from app.app_utils import print_message
 from .wordle_utils import *
-from ..constants import STARTING_TEAM_ID
+from ..constants import STARTING_TEAM_ID, MAX_ATTEMPTS, TEAMS_AMOUNT
 
 """
     Let the user input their guess.
@@ -17,6 +17,26 @@ def ask_user_guess(current_row: int) -> str:
         print_color = "red"
         print_message(error_message, print_color)
 
+"""
+    Play a single Wordle round for the specified team.
+"""
+def play_wordle_round_for_team(team_ID: int) -> None:
+    add_single_initial_rounds_info(team_ID)
+    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+
+    for current_attempt in range(MAX_ATTEMPTS):
+        show_wordle_board(team_ID)
+        guess = ask_user_guess(current_attempt)
+        add_guess_to_current_round(team_ID, guess, current_attempt)
+
+        if guess == word_to_guess:
+            show_wordle_board(team_ID)
+
+            win_message = f"Team {team_ID + 1} guessed the word '{word_to_guess}' correctly!"
+            print_color = "green"
+            print_message(win_message, print_color)
+            return
+
 """"
     Print the current Wordle board for the specified team.
 """
@@ -28,4 +48,7 @@ def show_wordle_board(team_ID: int) -> None:
     Main function to play the Wordle game.
 """
 def play_wordle() -> None:
-    pass
+    current_team_ID = STARTING_TEAM_ID
+
+    while True:
+        play_wordle_round_for_team(current_team_ID)
