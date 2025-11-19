@@ -1,4 +1,4 @@
-from ..teamsData import teamsData
+from ..teams_data import teams_data
 from random import choice
 from typing import List
 
