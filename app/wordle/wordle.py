@@ -1,5 +1,6 @@
 from app.app_utils import print_message
 from .wordle_utils import *
+from ..constants import STARTING_TEAM_ID
 
 """
     Let the user input their guess.
