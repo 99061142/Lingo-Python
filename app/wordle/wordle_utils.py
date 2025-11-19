@@ -92,7 +92,7 @@ def get_current_wordle_round_info(team_ID: int) -> dict:
     current_wordle_round_info = teamData["roundsInfo"]
 
     if not current_wordle_round_info:
-        raise ValueError(f"Team with ID {team_ID} does not have any rounds info initialized.")
+        raise ValueError(f"Team with ID {team_ID} does not have any rounds info initialized. Call `add_single_initial_rounds_info` to add the first round info.")
     
     current_wordle_round_info = current_wordle_round_info[-1]
     return current_wordle_round_info
