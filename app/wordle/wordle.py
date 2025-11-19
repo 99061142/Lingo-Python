@@ -42,7 +42,7 @@ def play_wordle_round_for_team(team_ID: int) -> None:
 """
 def show_wordle_board(team_ID: int) -> None:
     stringified_wordle_board = get_stringified_wordle_board(team_ID)
-    print(stringified_wordle_board)
+    print_message(stringified_wordle_board)
 
 """
     Main function to play the Wordle game.
@@ -54,7 +54,7 @@ def play_wordle() -> None:
     while True:
         # Display which team's turn it is
         title = f"Team {current_team_ID + 1}'s turn"
-        print(f"\n{title.center(board_width)}\n")
+        print_message(f"\n{title.center(board_width)}\n")
 
         play_wordle_round_for_team(current_team_ID)
 
