@@ -3,7 +3,7 @@ from .words import five_letter_words
 from random import choice
 from termcolor import colored
 from typing import Optional
-from ..constants import WORD_TO_GUESS_LENGTH, MAX_ATTEMPTS
+from ..constants import GAP_BETWEEN_LETTERS, WORD_TO_GUESS_LENGTH, MAX_ATTEMPTS
 
 # Global Set to keep track of unavailable words.    
 # This will be used to avoid repeating words in the game.
@@ -60,13 +60,17 @@ def get_current_wordle_round_letter_color(team_ID: int, position: tuple) -> Opti
         return None
     return current_wordle_round_guesses_color[row][col]
 
+def get_wordle_board_width() -> int:
+    amount_of_space_between_letters = GAP_BETWEEN_LETTERS
+    col_width = amount_of_space_between_letters * 2 + 1 # Spaces on both sides + letter itself
+    board_width = WORD_TO_GUESS_LENGTH * col_width
+    return board_width
+
 """
     Return a stringified version of the Wordle board for display purposes.
 """
 def get_stringified_wordle_board(team_ID: int) -> str:
-    amount_of_space_between_letters = 2
-    col_width = amount_of_space_between_letters * 2 + 1 # Spaces on both sides + letter itself
-    board_width = WORD_TO_GUESS_LENGTH * col_width
+    board_width = get_wordle_board_width()
 
     # Add text at the top of the board, which we also center
     title = "WORDLE BOARD"
@@ -77,7 +81,7 @@ def get_stringified_wordle_board(team_ID: int) -> str:
         for col_index, letter in enumerate(row):
             letter_position_on_wordle_board = (row_index, col_index)
             letter_color = get_current_wordle_round_letter_color(team_ID, letter_position_on_wordle_board)
-            stringified_board += f"{" " * amount_of_space_between_letters}{colored(letter, letter_color)}{" " * amount_of_space_between_letters}"
+            stringified_board += f"{" " * GAP_BETWEEN_LETTERS}{colored(letter, letter_color)}{" " * GAP_BETWEEN_LETTERS}"
 
         stringified_board += "\n\n"
     
