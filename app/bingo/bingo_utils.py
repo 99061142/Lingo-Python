@@ -1,3 +1,4 @@
+from app.constants import BINGO_BOARD_SIZE
 from ..teams_data import teams_data
 from random import choice
 from typing import List
@@ -21,17 +22,16 @@ def get_random_number(teamID: int, unavailableNumbers: List[int] = []) -> int:
 """
 def create_randomized_bingo_board(teamID: int) -> List[List[int]]:
     unavailableNumbers = [] # Numbers the team already has on their board
-    board_size = 4 # This is the amount of rows AND columns
     bingo_board = []
 
-    for _ in range(board_size):
+    for _ in range(BINGO_BOARD_SIZE):
         bingo_row = []
-        for _ in range(board_size):
+        for _ in range(BINGO_BOARD_SIZE):
             number = get_random_number(teamID, unavailableNumbers)
             unavailableNumbers.append(number)
             bingo_row.append(number)
         bingo_board.append(bingo_row)
-        
+
     return bingo_board
 
 """
@@ -57,3 +57,32 @@ def get_amount_of_red_balls_grabbed(team_ID: int) -> int:
     balls_grabbed = get_balls_grabbed(team_ID)
     red_balls_grabbed = balls_grabbed["red"]
     return red_balls_grabbed
+
+"""
+    Returns the set of filled positions on the bingo board for the given team_ID.
+"""
+def get_filled_positions_for_team(team_ID: int) -> set:
+    team_data = teams_data[team_ID]
+    bingo_board_data = team_data["bingoBoard"]
+    filled_positions = bingo_board_data["filledPositions"]
+    return filled_positions
+
+"""
+    Returns whether the bingo board has a horizontal line for the given team_ID.
+"""
+def bingo_board_has_horizontal_line_for_team(team_ID: int) -> bool:
+    filled_positions = get_filled_positions_for_team(team_ID)
+
+    for row_index in range(BINGO_BOARD_SIZE):
+        row_is_filled = True
+        for col_index in range(BINGO_BOARD_SIZE):
+            position = (row_index, col_index)
+
+            if position not in filled_positions:
+                row_is_filled = False
+                break
+        
+        if row_is_filled:
+            return True
+    
+    return False
