@@ -4,3 +4,4 @@ STARTING_TEAM_ID = 0 # IDs are 0-indexed
 GAP_BETWEEN_LETTERS = 2
 DEFAULT_TERMINAL_COLOR = "white" # The possible colors could be found here: https://pypi.org/project/termcolor/
 DEFAULT_EMPTY_LETTER_PLACEHOLDER = "_" # The placeholder for empty letters in the Wordle board
+BINGO_BOARD_SIZE = 4 # The amount of rows AND columns in the bingo board
