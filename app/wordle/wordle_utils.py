@@ -3,7 +3,7 @@ from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from ..constants import DEFAULT_EMPTY_LETTER_PLACEHOLDER, DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS
+from ..constants import DEFAULT_EMPTY_LETTER_PLACEHOLDER, DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS, TEAMS_AMOUNT
 
 # Global Set to keep track of unavailable words.    
 # This will be used to avoid repeating words in the game.
@@ -350,4 +350,18 @@ def team_has_lost_wordle_game(team_ID: int) -> bool:
     if rounds_lost_in_a_row >= 3:
         return True
     
+    return False
+
+"""
+    Return whether any team has won or lost the Wordle game.
+"""
+def any_team_has_won_or_lost_the_wordle_game() -> bool:
+    for team_ID in range(TEAMS_AMOUNT):
+        team_has_lost = team_has_lost_wordle_game(team_ID)
+        if team_has_lost:
+            return True
+
+        team_has_won = team_has_won_wordle_game(team_ID)
+        if team_has_won:
+            return True
     return False
