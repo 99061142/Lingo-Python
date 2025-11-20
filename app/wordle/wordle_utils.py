@@ -1,4 +1,4 @@
-from app.bingo.bingo_utils import bingo_board_has_line_for_team, get_amount_of_green_balls_grabbed
+from app.bingo.bingo_utils import bingo_board_has_line_for_team, get_amount_of_green_balls_grabbed, get_amount_of_red_balls_grabbed
 from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
@@ -335,6 +335,19 @@ def team_has_won_wordle_game(team_ID: int) -> bool:
     # If the team has won 10 or more rounds, they win the game.
     rounds_won = amount_of_rounds_won_by_team(team_ID)
     if rounds_won >= 10:
+        return True
+    
+    return False
+
+def team_has_lost_wordle_game(team_ID: int) -> bool:
+    # If the team has grabbed 3 or more red balls, they lose the game.
+    red_balls_grabbed = get_amount_of_red_balls_grabbed(team_ID)
+    if red_balls_grabbed >= 3:
+        return True
+    
+    # If the team has lost 3 rounds in a row, they lose the game.
+    rounds_lost_in_a_row = amount_of_rounds_lost_in_a_row(team_ID)
+    if rounds_lost_in_a_row >= 3:
         return True
     
     return False
