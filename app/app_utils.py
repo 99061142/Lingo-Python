@@ -10,7 +10,7 @@ def get_initial_team_data(team_ID: int) -> dict:
     initial_team_data = {
         "bingoBoard": {
             "board": create_randomized_bingo_board(team_ID),
-            "filledPositions": []
+            "filledPositions": set()
         },
         "balls": {
             "grabbed": {
