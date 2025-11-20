@@ -87,6 +87,9 @@ def bingo_board_has_horizontal_line_for_team(team_ID: int) -> bool:
     
     return False
 
+"""
+    Returns whether the bingo board has a vertical line for the given team_ID.
+"""
 def bingo_board_has_vertical_line_for_team(team_ID: int) -> bool:
     filled_positions = get_filled_positions_for_team(team_ID)
 
@@ -103,3 +106,31 @@ def bingo_board_has_vertical_line_for_team(team_ID: int) -> bool:
             return True
     
     return False
+
+"""
+    Returns whether the bingo board has a diagonal line for the given team_ID.
+"""
+def bingo_board_has_diagonal_line_for_team(team_ID: int) -> bool:
+    filled_positions = get_filled_positions_for_team(team_ID)
+
+    # Check top-left to bottom-right diagonal
+    diagonal_row_is_filled = True
+    for index in range(BINGO_BOARD_SIZE):
+        position = (index, index)
+        if position not in filled_positions:
+            diagonal_row_is_filled = False
+            break
+    if diagonal_row_is_filled:
+        return True
+
+    # Check top-right to bottom-left diagonal
+    # We default the `diagonal_row_is_filled` variable again to True for the next check
+    diagonal_row_is_filled = True
+    for index in range(BINGO_BOARD_SIZE):
+        column_index = BINGO_BOARD_SIZE - 1 - index
+        position = (index, column_index)
+        if position not in filled_positions:
+            diagonal_row_is_filled = False
+            break
+    
+    return diagonal_row_is_filled
