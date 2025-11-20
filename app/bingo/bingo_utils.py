@@ -74,15 +74,32 @@ def bingo_board_has_horizontal_line_for_team(team_ID: int) -> bool:
     filled_positions = get_filled_positions_for_team(team_ID)
 
     for row_index in range(BINGO_BOARD_SIZE):
-        row_is_filled = True
+        horizontal_row_is_filled = True
         for col_index in range(BINGO_BOARD_SIZE):
             position = (row_index, col_index)
 
             if position not in filled_positions:
-                row_is_filled = False
+                horizontal_row_is_filled = False
                 break
         
-        if row_is_filled:
+        if horizontal_row_is_filled:
+            return True
+    
+    return False
+
+def bingo_board_has_vertical_line_for_team(team_ID: int) -> bool:
+    filled_positions = get_filled_positions_for_team(team_ID)
+
+    for col_index in range(BINGO_BOARD_SIZE):
+        vertical_row_is_filled = True
+        for row_index in range(BINGO_BOARD_SIZE):
+            position = (row_index, col_index)
+
+            if position not in filled_positions:
+                vertical_row_is_filled = False
+                break
+        
+        if vertical_row_is_filled:
             return True
     
     return False
