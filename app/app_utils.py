@@ -38,3 +38,9 @@ def initialize_teams_data() -> None:
 def print_message(message: str, color: str = DEFAULT_TERMINAL_COLOR) -> None:
     colored_message = colored(message, color)
     print(f"\n{colored_message}\n")
+
+"""
+    Sets the winning status for the specified team.
+"""
+def set_winning_team(team_ID: int) -> None:
+    teams_data[team_ID]["hasWon"] = True
