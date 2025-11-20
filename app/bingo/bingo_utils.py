@@ -1,4 +1,5 @@
-from app.constants import BINGO_BOARD_SIZE
+from termcolor import colored
+from app.constants import BINGO_BOARD_SIZE, GAP_BETWEEN_LETTERS
 from ..teams_data import teams_data
 from random import choice
 from typing import List
@@ -184,3 +185,45 @@ def bingo_board_has_line_for_team(team_ID: int) -> bool:
         return True
 
     return False
+
+def get_bingo_board_for_team(team_ID: int) -> List[List[int]]:
+    team_data = teams_data[team_ID]
+    bingo_board = team_data["bingoBoard"]["board"]
+    return bingo_board
+
+def get_filled_bingo_board_positions_for_team(team_ID: int) -> set:
+    team_data = teams_data[team_ID]
+    filled_positions = team_data["bingoBoard"]["filledPositions"]
+    return filled_positions
+
+""""
+    Returns a stringified version of the bingo board for the given team_ID.
+"""
+def get_stringified_bingo_board_for_team(team_ID: int) -> str:
+    bingo_board = get_bingo_board_for_team(team_ID)
+    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+
+    stringified_board = ""
+    for row_index in range(BINGO_BOARD_SIZE):
+        for col_index in range(BINGO_BOARD_SIZE):
+            number = bingo_board[row_index][col_index]
+            position = (row_index, col_index)
+
+            # Center the number within the defined gap
+            # E.g. if the GAP_BETWEEN_LETTERS is 2, 
+            # * The number 7 would be formatted as " 7 "
+            # * The 23, it would be "23 "
+            # * And 100 would be "100"
+            # What we see here is that it first centers the number in a field of width GAP_BETWEEN_LETTERS,
+            # and if it increases the length of the number, it first adds spaces to the left until it reaches the width,
+            # and then adds spaces to the right until it reaches the width.
+            number_str = f"{number:^{GAP_BETWEEN_LETTERS}}"
+            
+            if position in filled_positions:
+                number_str = colored(number_str, "green")
+            
+            stringified_board += f"{" " * GAP_BETWEEN_LETTERS}{number_str}{" " * GAP_BETWEEN_LETTERS}"
+
+        stringified_board += "\n\n"
+
+    return stringified_board
