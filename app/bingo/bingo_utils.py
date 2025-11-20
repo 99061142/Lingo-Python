@@ -4,33 +4,65 @@ from random import choice
 from typing import List
 
 """
-    Returns a random number between 1 and 100 that is not in the unavailableNumbers list.
+    Returns a random number from the given list of numbers.
 """
-def get_random_number(teamID: int, unavailableNumbers: List[int] = []) -> int:
+def get_random_number(numbers: List[int]) -> int:
+    if not numbers:
+        raise ValueError("The list of numbers to select a random number with is empty.")
+
+    random_number = choice(numbers)
+    return random_number
+
+"""
+    Creates and returns a list of even numbers within the given range
+"""
+def create_even_numbers_list(start: int, end: int) -> List[int]:
+    even_numbers = []
+    
+    # If the start isn't even, we add 1 to make it even
+    start = start if start % 2 == 0 else start + 1
+    
+    for number in range(start, end + 1, 2):
+        even_numbers.append(number)
+    return even_numbers
+
+"""
+    Creates and returns a list of uneven numbers within the given range
+"""
+def create_uneven_numbers_list(start: int, end: int) -> List[int]:
+    uneven_numbers = []
+
+    # If the start isn't uneven, we add 1 to make it uneven
+    start = start if start % 2 != 0 else start + 1
+
+    for number in range(start, end + 1, 2):
+        uneven_numbers.append(number)
+    return uneven_numbers
+
+"""
+    Returns a 4x4 bingo board with randomized numbers for the given team_ID.
+    The team_ID can only be 0 or 1 in our current implementation.
+"""
+def create_randomized_bingo_board(team_ID: int) -> List[List[int]]:
+    # Hardcoded range for bingo numbers
     start = 1
     end = 100
 
-    # Ensure that the team with the ID of 0 gets even numbers, and the team with the ID of 1 gets odd numbers
-    while True:
-        number = choice(range(start, end + 1))
-        if number % 2 == teamID and number not in unavailableNumbers:
-            return number
+    # Team 0 gets even numbers, team 1 gets uneven numbers
+    if team_ID == 0:
+        available_numbers = create_even_numbers_list(start, end)
+    else:
+        available_numbers = create_uneven_numbers_list(start, end)
 
-"""
-    Returns a 4x4 bingo board with randomized numbers for the given teamID.
-    The teamID can only be 0 or 1 in our current implementation.
-"""
-def create_randomized_bingo_board(teamID: int) -> List[List[int]]:
-    unavailableNumbers = [] # Numbers the team already has on their board
+    # Create and return the bingo board
     bingo_board = []
-
     for _ in range(BINGO_BOARD_SIZE):
-        bingo_row = []
+        bingo_board_row = []
         for _ in range(BINGO_BOARD_SIZE):
-            number = get_random_number(teamID, unavailableNumbers)
-            unavailableNumbers.append(number)
-            bingo_row.append(number)
-        bingo_board.append(bingo_row)
+            number = get_random_number(available_numbers)
+            available_numbers.remove(number)
+            bingo_board_row.append(number)
+        bingo_board.append(bingo_board_row)
 
     return bingo_board
 
