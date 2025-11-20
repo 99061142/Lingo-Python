@@ -28,6 +28,8 @@ def get_initial_team_data(team_ID: int) -> dict:
     Initializes the teams_data list with initial data for each team.
 """
 def initialize_teams_data() -> None:
+    remove_teams_data()
+
     for team_ID in range(TEAMS_AMOUNT):
         initial_team_data = get_initial_team_data(team_ID)
         teams_data.append(initial_team_data)
@@ -44,3 +46,9 @@ def print_message(message: str, color: str = DEFAULT_TERMINAL_COLOR) -> None:
 """
 def set_winning_team(team_ID: int) -> None:
     teams_data[team_ID]["hasWon"] = True
+
+"""
+    Resets the teams_data list to an empty state.
+"""
+def remove_teams_data() -> None:
+    teams_data.clear()
