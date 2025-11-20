@@ -134,3 +134,21 @@ def bingo_board_has_diagonal_line_for_team(team_ID: int) -> bool:
             break
     
     return diagonal_row_is_filled
+
+"""
+    Returns whether the bingo board has 1 or more lines for the given team_ID.
+"""
+def bingo_board_has_line_for_team(team_ID: int) -> bool:
+    has_horizontal_line = bingo_board_has_horizontal_line_for_team(team_ID)
+    if has_horizontal_line:
+        return True
+
+    has_vertical_line = bingo_board_has_vertical_line_for_team(team_ID)
+    if has_vertical_line:
+        return True
+
+    has_diagonal_line = bingo_board_has_diagonal_line_for_team(team_ID)
+    if has_diagonal_line:
+        return True
+
+    return False
