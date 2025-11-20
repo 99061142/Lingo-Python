@@ -1,3 +1,4 @@
+from app.bingo.bingo_utils import bingo_board_has_line_for_team, get_amount_of_green_balls_grabbed
 from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
@@ -316,3 +317,24 @@ def is_valid_guess(guess: str) -> dict:
         "isValid": True,
         "message": ""
     }
+
+"""
+    Returns whether the team has won the Wordle game based on the winning conditions.
+"""
+def team_has_won_wordle_game(team_ID: int) -> bool:
+    # If the team has grabbed 3 or more green balls, they win the game.
+    green_balls_grabbed = get_amount_of_green_balls_grabbed(team_ID)
+    if green_balls_grabbed >= 3:
+        return True
+    
+    # If the team has any line on their bingo board, they win the game.
+    has_any_filled_lines_on_bingo_board = bingo_board_has_line_for_team(team_ID)
+    if has_any_filled_lines_on_bingo_board:
+        return True
+    
+    # If the team has won 10 or more rounds, they win the game.
+    rounds_won = amount_of_rounds_won_by_team(team_ID)
+    if rounds_won >= 10:
+        return True
+    
+    return False
