@@ -31,5 +31,29 @@ def create_randomized_bingo_board(teamID: int) -> List[List[int]]:
             unavailableNumbers.append(number)
             bingo_row.append(number)
         bingo_board.append(bingo_row)
-
+        
     return bingo_board
+
+"""
+    Returns the dictionary which holds the grabbed balls information for the given team_ID.
+"""
+def get_balls_grabbed(team_ID: int) -> dict:
+    team_data = teams_data[team_ID]
+    balls_grabbed = team_data["balls"]["grabbed"]
+    return balls_grabbed
+
+"""
+    Returns the amount of green balls grabbed by the given team_ID.
+"""
+def get_amount_of_green_balls_grabbed(team_ID: int) -> int:
+    balls_grabbed = get_balls_grabbed(team_ID)
+    green_balls_grabbed = balls_grabbed["green"]
+    return green_balls_grabbed
+
+"""
+    Returns the amount of red balls grabbed by the given team_ID.
+"""
+def get_amount_of_red_balls_grabbed(team_ID: int) -> int:
+    balls_grabbed = get_balls_grabbed(team_ID)
+    red_balls_grabbed = balls_grabbed["red"]
+    return red_balls_grabbed
