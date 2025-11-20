@@ -1,4 +1,4 @@
-from app.bingo.bingo_utils import bingo_board_has_line_for_team, get_amount_of_green_balls_grabbed, get_amount_of_red_balls_grabbed
+from app.bingo.bingo_utils import bingo_board_has_line_for_team, did_team_win_bingo_game, get_amount_of_color_balls_grabbed
 from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
@@ -14,6 +14,19 @@ _unavailable_words = set()
 ### GETTERS
 ###
 
+
+"""
+    Get whether the team has guessed the word correctly in the current round.
+"""
+def has_team_guessed_word_correctly_in_current_round(team_ID: int) -> bool:
+    current_wordle_round_info = get_current_wordle_round_info(team_ID)
+    word_to_guess = current_wordle_round_info["wordToGuess"]
+    guesses = current_wordle_round_info["guesses"]
+    last_guess = guesses[-1]
+
+    if last_guess == word_to_guess:
+        return True
+    return False
 
 """
     Return the amount of rounds won by the specific team.
@@ -268,6 +281,10 @@ def add_guess_to_current_round(team_ID: int, guess: str, attempt_number: int) ->
     guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
     current_wordle_round_info["guessesColor"][attempt_number] = guess_colors
 
+    # If the word is guessed correctly, we do not need to add correct letters to the next attempt row.
+    if guess == word_to_guess:
+        return
+
     # We create a temporary next attempt row to check if we need to add correct letters to it. 
     # If we don't do this, the user won't see which letters were correct in the next attempt row.
     next_attempt_row_guess = []
@@ -321,15 +338,9 @@ def is_valid_guess(guess: str) -> dict:
 """
     Returns whether the team has won the Wordle game based on the winning conditions.
 """
-def team_has_won_wordle_game(team_ID: int) -> bool:
-    # If the team has grabbed 3 or more green balls, they win the game.
-    green_balls_grabbed = get_amount_of_green_balls_grabbed(team_ID)
-    if green_balls_grabbed >= 3:
-        return True
-    
-    # If the team has any line on their bingo board, they win the game.
-    has_any_filled_lines_on_bingo_board = bingo_board_has_line_for_team(team_ID)
-    if has_any_filled_lines_on_bingo_board:
+def team_has_won_game(team_ID: int) -> bool:
+    won_bingo_game = did_team_win_bingo_game(team_ID)
+    if won_bingo_game:
         return True
     
     # If the team has won 10 or more rounds, they win the game.
@@ -339,9 +350,9 @@ def team_has_won_wordle_game(team_ID: int) -> bool:
     
     return False
 
-def team_has_lost_wordle_game(team_ID: int) -> bool:
+def team_has_lost_game(team_ID: int) -> bool:
     # If the team has grabbed 3 or more red balls, they lose the game.
-    red_balls_grabbed = get_amount_of_red_balls_grabbed(team_ID)
+    red_balls_grabbed = get_amount_of_color_balls_grabbed(team_ID, "red")
     if red_balls_grabbed >= 3:
         return True
     
@@ -357,11 +368,11 @@ def team_has_lost_wordle_game(team_ID: int) -> bool:
 """
 def any_team_has_won_or_lost_the_wordle_game() -> bool:
     for team_ID in range(TEAMS_AMOUNT):
-        team_has_lost = team_has_lost_wordle_game(team_ID)
+        team_has_lost = team_has_lost_game(team_ID)
         if team_has_lost:
             return True
 
-        team_has_won = team_has_won_wordle_game(team_ID)
+        team_has_won = team_has_won_game(team_ID)
         if team_has_won:
             return True
     return False

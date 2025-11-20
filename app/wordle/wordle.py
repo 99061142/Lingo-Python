@@ -1,6 +1,7 @@
 from app.app_utils import print_message, set_winning_team
 from .wordle_utils import *
 from ..constants import STARTING_TEAM_ID, MAX_ATTEMPTS, TEAMS_AMOUNT
+from ..bingo.bingo import play_bingo_round_for_team
 
 """
     Let the user input their guess.
@@ -64,10 +65,15 @@ def print_wordle_board(team_ID: int) -> None:
 """
 def play_wordle() -> None:
     current_team_ID = STARTING_TEAM_ID
-
+    
     while not any_team_has_won_or_lost_the_wordle_game():
         play_wordle_round_for_team(current_team_ID)
 
+        # If the current team has won the Wordle game, we break out of the loop early.
+        if has_team_guessed_word_correctly_in_current_round(current_team_ID):
+            play_bingo_round_for_team(current_team_ID)
+
+        # Move to the next team
         current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
 
     set_winning_team(current_team_ID)
