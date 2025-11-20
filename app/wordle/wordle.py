@@ -65,7 +65,7 @@ def print_wordle_board(team_ID: int) -> None:
 def play_wordle() -> None:
     current_team_ID = STARTING_TEAM_ID
 
-    while True:
+    while not any_team_has_won_or_lost_the_wordle_game():
         play_wordle_round_for_team(current_team_ID)
 
         current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
