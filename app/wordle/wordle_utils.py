@@ -2,7 +2,7 @@ from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from ..constants import DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS
+from ..constants import DEFAULT_EMPTY_LETTER_PLACEHOLDER, DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS
 
 # Global Set to keep track of unavailable words.    
 # This will be used to avoid repeating words in the game.
@@ -35,7 +35,7 @@ def get_current_wordle_round_board(team_ID: int) -> list:
             # We do this since at the start of the round, we hardcoded the first letter only.
             # Because of this, we do not have 5 values within the guess yet.
             if length_of_guess < word_to_guess_length:
-                guess += "_" * (word_to_guess_length - length_of_guess)
+                guess += DEFAULT_EMPTY_LETTER_PLACEHOLDER * (word_to_guess_length - length_of_guess)
 
             wordle_board.append(list(guess))
 
@@ -44,7 +44,7 @@ def get_current_wordle_round_board(team_ID: int) -> list:
     for _ in range(missing_guesses_amount):
         placeholder_guess = []
         for _ in range(word_to_guess_length):
-            placeholder_guess.append("_")
+            placeholder_guess.append(DEFAULT_EMPTY_LETTER_PLACEHOLDER)
         wordle_board.append(placeholder_guess)
 
     return wordle_board
@@ -214,19 +214,45 @@ def add_single_initial_rounds_info(team_ID: int) -> None:
     Add a guess to the current round for a specific team, adding both the guess and its corresponding colors.
 """
 def add_guess_to_current_round(team_ID: int, guess: str, attempt_number: int) -> None:
-    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
-    guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
     current_wordle_round_info = get_current_wordle_round_info(team_ID)
     current_wordle_round_guesses = current_wordle_round_info["guesses"]
 
-    # If it's the first attempt, we remove the hint on the first row and replace it with the full guess.
-    if attempt_number == 0:
-        current_wordle_round_guesses[attempt_number] = guess
-        current_wordle_round_info["guessesColor"][attempt_number] = guess_colors
-        return
+    # If this is a new attempt, we need to add empty lists for the new attempt.
+    # We check 'is equal' here since attempt_number is 0-indexed.
+    # This will be True when the row for the attempt doesn't show letters which are on the correct position yet.
+    amount_of_guesses_made_without_current = len(current_wordle_round_guesses)
+    if amount_of_guesses_made_without_current == attempt_number:
+        current_wordle_round_guesses.append([])
+        current_wordle_round_info["guessesColor"].append([])
 
-    current_wordle_round_guesses.append(guess)
-    current_wordle_round_info["guessesColor"].append(guess_colors)
+    current_wordle_round_guesses[attempt_number] = guess
+
+    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+    guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
+    current_wordle_round_info["guessesColor"][attempt_number] = guess_colors
+
+    # We create a temporary next attempt row to check if we need to add correct letters to it. 
+    # If we don't do this, the user won't see which letters were correct in the next attempt row.
+    next_attempt_row_guess = []
+    next_attempt_row_colors = []
+    one_or_more_correct_letters_found = False
+    for i, guess_color in enumerate(guess_colors):
+        # If the letter is correct, we show it in the next attempt row as well.
+        if guess_color == "green":
+            next_attempt_row_guess.append(guess[i])
+            next_attempt_row_colors.append("green")
+            one_or_more_correct_letters_found = True
+            continue
+        
+        # If not, we just add the placeholder and default color.
+        # This is done to check if one or more correct letters were found in the current guess.
+        next_attempt_row_guess.append(DEFAULT_EMPTY_LETTER_PLACEHOLDER)
+        next_attempt_row_colors.append(DEFAULT_TERMINAL_COLOR)
+
+    # If one or more correct letters were found, we add the next attempt row to show the correct letters.
+    if one_or_more_correct_letters_found:
+        current_wordle_round_guesses.append(next_attempt_row_guess)
+        current_wordle_round_info["guessesColor"].append(next_attempt_row_colors)
 
 
 ###
