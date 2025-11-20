@@ -16,6 +16,10 @@ def get_initial_team_data(team_ID: int) -> dict:
             "grabbed": {
                 "green": 0,
                 "red": 0
+            },
+            "remaining": {
+                "green": 3,
+                "red": 3
             }
         },
         "roundsInfo": [],
