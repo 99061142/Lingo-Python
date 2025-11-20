@@ -1,4 +1,4 @@
-from app.app_utils import print_message
+from app.app_utils import print_message, set_winning_team
 from .wordle_utils import *
 from ..constants import STARTING_TEAM_ID, MAX_ATTEMPTS, TEAMS_AMOUNT
 
@@ -69,3 +69,5 @@ def play_wordle() -> None:
         play_wordle_round_for_team(current_team_ID)
 
         current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
+
+    set_winning_team(current_team_ID)
