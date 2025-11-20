@@ -227,3 +227,65 @@ def get_stringified_bingo_board_for_team(team_ID: int) -> str:
         stringified_board += "\n\n"
 
     return stringified_board
+
+"""
+    Returns the remaining balls information for the given team_ID.
+"""
+def get_remaining_balls_for_team(team_ID: int) -> dict:
+    team_data = teams_data[team_ID]
+    balls_remaining = team_data["balls"]["remaining"]
+    return balls_remaining
+
+"""
+    Returns the amount of remaining red balls for the given team_ID.
+"""
+def get_remaining_color_balls_for_team(team_ID: int, color: str) -> int:
+    balls_remaining = get_remaining_balls_for_team(team_ID)
+    remaining_color_balls = balls_remaining[color]
+    return remaining_color_balls
+
+"""
+    Decreases the amount of remaining color balls for the given team_ID by 1.
+"""
+def decrease_remaining_color_balls_for_team(team_ID: int, color: str) -> None:
+    balls_remaining = get_remaining_balls_for_team(team_ID)
+    balls_remaining[color] -= 1
+
+def get_remaining_bingo_board_numbers_for_team(team_ID: int) -> List[int]:
+    bingo_board = get_bingo_board_for_team(team_ID)
+    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+
+    remaining_numbers = []
+    for row_index in range(BINGO_BOARD_SIZE):
+        for col_index in range(BINGO_BOARD_SIZE):
+            position = (row_index, col_index)
+
+            if position not in filled_positions:
+                number = bingo_board[row_index][col_index]
+                remaining_numbers.append(number)
+    
+    return remaining_numbers
+
+"""
+    Return a list which represents the bingo board pit for the given team_ID.
+    It contains the remaining colored balls (red and green), as well as the remaining numbers on the bingo board.
+"""
+def get_bingo_board_pit_balls(team_ID: int) -> List:
+    bingo_board_pit_balls = []
+    
+    # Add the remaining red balls
+    remaining_red_balls_in_pit = get_remaining_color_balls_for_team(team_ID, "red")
+    for _ in range(remaining_red_balls_in_pit):
+        bingo_board_pit_balls.append("red")
+
+    # Add the remaining green balls
+    remaining_green_balls_in_pit = get_remaining_color_balls_for_team(team_ID, "green")
+    for _ in range(remaining_green_balls_in_pit):
+        bingo_board_pit_balls.append("green")
+
+    # Add the remaining numbers on the bingo board
+    remaining_numbers_in_pit = get_remaining_bingo_board_numbers_for_team(team_ID)
+    for number in remaining_numbers_in_pit:
+        bingo_board_pit_balls.append(number)
+
+    return bingo_board_pit_balls
