@@ -15,6 +15,23 @@ _unavailable_words = set()
 
 
 """
+    Return the amount of rounds won by the specific team.
+"""
+def amount_of_rounds_won_by_team(team_ID: int) -> int:
+    teamData = teams_data[team_ID]
+    roundsInfo = teamData["roundsInfo"]
+    rounds_won = 0
+
+    for round_info in roundsInfo:
+        word_to_guess = round_info["wordToGuess"]
+        last_guess = round_info["guesses"][-1]
+
+        if last_guess == word_to_guess:
+            rounds_won += 1
+    
+    return rounds_won
+
+"""
     Return the current round's Wordle board for a specific team.
     Do note that we also return empty rows for remaining attempts.
 """
