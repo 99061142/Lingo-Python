@@ -76,20 +76,12 @@ def get_balls_grabbed(team_ID: int) -> dict:
     return balls_grabbed
 
 """
-    Returns the amount of green balls grabbed by the given team_ID.
+    Returns the amount of color balls grabbed for the given team_ID.
 """
-def get_amount_of_green_balls_grabbed(team_ID: int) -> int:
+def get_amount_of_color_balls_grabbed(team_ID: int, color: str) -> int:
     balls_grabbed = get_balls_grabbed(team_ID)
-    green_balls_grabbed = balls_grabbed["green"]
-    return green_balls_grabbed
-
-"""
-    Returns the amount of red balls grabbed by the given team_ID.
-"""
-def get_amount_of_red_balls_grabbed(team_ID: int) -> int:
-    balls_grabbed = get_balls_grabbed(team_ID)
-    red_balls_grabbed = balls_grabbed["red"]
-    return red_balls_grabbed
+    amount_of_color_balls_grabbed = balls_grabbed[color]
+    return amount_of_color_balls_grabbed
 
 """
     Returns the set of filled positions on the bingo board for the given team_ID.
@@ -245,11 +237,20 @@ def get_remaining_color_balls_for_team(team_ID: int, color: str) -> int:
     return remaining_color_balls
 
 """
+    Increases the amount of grabbed color balls for the given team_ID by 1.
+"""
+def increase_grabbed_color_balls_for_team(team_ID: int, color: str) -> None:
+    balls_grabbed = get_balls_grabbed(team_ID)
+    balls_grabbed[color] += 1
+
+"""
     Decreases the amount of remaining color balls for the given team_ID by 1.
 """
 def decrease_remaining_color_balls_for_team(team_ID: int, color: str) -> None:
     balls_remaining = get_remaining_balls_for_team(team_ID)
     balls_remaining[color] -= 1
+
+    increase_grabbed_color_balls_for_team(team_ID, color)
 
 def get_remaining_bingo_board_numbers_for_team(team_ID: int) -> List[int]:
     bingo_board = get_bingo_board_for_team(team_ID)
@@ -270,7 +271,7 @@ def get_remaining_bingo_board_numbers_for_team(team_ID: int) -> List[int]:
     Return a list which represents the bingo board pit for the given team_ID.
     It contains the remaining colored balls (red and green), as well as the remaining numbers on the bingo board.
 """
-def get_bingo_board_pit_balls(team_ID: int) -> List:
+def get_available_bingo_board_pit_balls_for_team(team_ID: int) -> List:
     bingo_board_pit_balls = []
     
     # Add the remaining red balls
@@ -289,3 +290,32 @@ def get_bingo_board_pit_balls(team_ID: int) -> List:
         bingo_board_pit_balls.append(number)
 
     return bingo_board_pit_balls
+
+def mark_number_on_bingo_board(team_ID: int, grabbled_number: int) -> None:
+    bingo_board = get_bingo_board_for_team(team_ID)
+    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+
+    for row_index in range(BINGO_BOARD_SIZE):
+        for col_index in range(BINGO_BOARD_SIZE):
+            number = bingo_board[row_index][col_index]
+
+            if number == grabbled_number:
+                position = (row_index, col_index)
+                filled_positions.add(position)
+                return
+
+"""
+    Returns whether the player has won the bingo game for the given team_ID.
+"""            
+def did_team_win_bingo_game(team_ID: int) -> bool:
+    # If the team has grabbed 3 or more green balls, they win the game.
+    green_balls_grabbed = get_amount_of_color_balls_grabbed(team_ID, "green")
+    if green_balls_grabbed >= 3:
+        return True
+    
+    # If the team has any line on their bingo board, they win the game.
+    has_any_filled_lines_on_bingo_board = bingo_board_has_line_for_team(team_ID)
+    if has_any_filled_lines_on_bingo_board:
+        return True
+    
+    return False
