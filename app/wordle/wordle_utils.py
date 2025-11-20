@@ -32,6 +32,25 @@ def amount_of_rounds_won_by_team(team_ID: int) -> int:
     return rounds_won
 
 """
+    Return the amount of rounds lost in a row by the specific team.
+"""
+def amount_of_rounds_lost_in_a_row(team_ID: int) -> int:
+    teamData = teams_data[team_ID]
+    roundsInfo = teamData["roundsInfo"]
+    rounds_lost_in_a_row = 0
+
+    for round_info in reversed(roundsInfo):
+        word_to_guess = round_info["wordToGuess"]
+        last_guess = round_info["guesses"][-1]
+
+        if last_guess != word_to_guess:
+            rounds_lost_in_a_row += 1
+        else:
+            break
+    
+    return rounds_lost_in_a_row
+
+"""
     Return the current round's Wordle board for a specific team.
     Do note that we also return empty rows for remaining attempts.
 """
