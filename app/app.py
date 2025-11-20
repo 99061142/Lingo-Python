@@ -7,6 +7,7 @@ from .wordle.wordle import play_wordle
 def start_game() -> None:
     initialize_teams_data()
     play_wordle()
+    ask_to_play_again()
 
 """
     Restart the game by re-initializing the teams data and starting the game.

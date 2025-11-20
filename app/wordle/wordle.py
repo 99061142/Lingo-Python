@@ -1,4 +1,3 @@
-from app.app import ask_to_play_again
 from app.app_utils import print_message, set_winning_team
 from .wordle_utils import *
 from ..constants import STARTING_TEAM_ID, MAX_ATTEMPTS, TEAMS_AMOUNT
@@ -72,4 +71,3 @@ def play_wordle() -> None:
         current_team_ID = (current_team_ID + 1) % TEAMS_AMOUNT
 
     set_winning_team(current_team_ID)
-    ask_to_play_again()
