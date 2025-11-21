@@ -1,0 +1,10 @@
+{
+    "letter_color_for_guess": {
+        "correct": "green",
+        "misplaced": "yellow",
+        "incorrect": "red",
+        "default": "white"
+    },
+    "max_guess_attempts": 5,
+    "empty_column_placeholder": "_"
+}

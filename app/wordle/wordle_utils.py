@@ -1,13 +1,15 @@
-from app.bingo.bingo_utils import bingo_board_has_line_for_team, did_team_win_bingo_game, get_amount_of_color_balls_grabbed
 from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from ..constants import DEFAULT_EMPTY_LETTER_PLACEHOLDER, DEFAULT_TERMINAL_COLOR, GAP_BETWEEN_LETTERS, MAX_ATTEMPTS, TEAMS_AMOUNT
+from ..app_constants import GAP_BETWEEN_BOARD_COLUMNS
+from ..app_settings.app_settings_utils import get_amount_of_teams
+from .wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts, get_empty_column_placeholder_for_wordle_board, get_available_letter_position_colors
 
-# Global Set to keep track of unavailable words.    
-# This will be used to avoid repeating words in the game.
-_unavailable_words = set()
+
+# Global set to keep track of used wordle words.
+# This will be used to avoid repeating words within the rounds of the wordle game
+_used_wordle_words = set()
 
 
 ###
@@ -16,26 +18,25 @@ _unavailable_words = set()
 
 
 """
-    Get whether the team has guessed the word correctly in the current round.
+    Return whether the team has guessed the word correctly in the current round.
 """
 def has_team_guessed_word_correctly_in_current_round(team_ID: int) -> bool:
-    current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    word_to_guess = current_wordle_round_info["wordToGuess"]
-    guesses = current_wordle_round_info["guesses"]
-    last_guess = guesses[-1]
+    current_wordle_round = get_current_wordle_round_for_team(team_ID)
+    word_to_guess = current_wordle_round["wordToGuess"]
+    last_guess = current_wordle_round["guesses"][-1]
 
     if last_guess == word_to_guess:
         return True
     return False
 
 """
-    Return the amount of rounds won by the specific team.
+    Return the amount of rounds won within the Wordle game by the specific team.
 """
-def amount_of_rounds_won_by_team(team_ID: int) -> int:
+def amount_of_wordle_rounds_won_by_team(team_ID: int) -> int:
     teamData = teams_data[team_ID]
     roundsInfo = teamData["roundsInfo"]
+    
     rounds_won = 0
-
     for round_info in roundsInfo:
         word_to_guess = round_info["wordToGuess"]
         last_guess = round_info["guesses"][-1]
@@ -46,177 +47,210 @@ def amount_of_rounds_won_by_team(team_ID: int) -> int:
     return rounds_won
 
 """
-    Return the amount of rounds lost in a row by the specific team.
+    Return the amount of rounds lost in a row within the Wordle game by the specific team.
 """
-def amount_of_rounds_lost_in_a_row(team_ID: int) -> int:
+def amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID: int) -> int:
     teamData = teams_data[team_ID]
     roundsInfo = teamData["roundsInfo"]
+    
     rounds_lost_in_a_row = 0
-
     for round_info in reversed(roundsInfo):
         word_to_guess = round_info["wordToGuess"]
         last_guess = round_info["guesses"][-1]
 
-        if last_guess != word_to_guess:
-            rounds_lost_in_a_row += 1
-        else:
+        if last_guess == word_to_guess:
             break
+
+        rounds_lost_in_a_row += 1
     
     return rounds_lost_in_a_row
 
 """
-    Return the current round's Wordle board for a specific team.
-    Do note that we also return empty rows for remaining attempts.
+    Return the current round's Wordle board for the specified team.
+    !Do note that this is a 2D list representing the wordle board, with placeholders for empty rows and/or letters.
+    !This is not a stringified version of the board for display purposes.
 """
-def get_current_wordle_round_board(team_ID: int) -> list:
-    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+def get_current_wordle_round_board_for_team(team_ID: int) -> list:
+    word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
     word_to_guess_length = len(word_to_guess)
     
     wordle_board = []
-    wordle_round_guesses = get_current_wordle_round_guesses(team_ID)
-    guessed_amount = len(wordle_round_guesses)
+    wordle_round_guesses = get_current_wordle_round_guesses_by_team(team_ID)
+    guesses_amount = len(wordle_round_guesses)
+    letter_placeholder = get_empty_column_placeholder_for_wordle_board()
 
-    # Add the rows with the guesses made so far
-    if guessed_amount:
+    # Add each guess made so far to the board
+    if guesses_amount:
         for guess in wordle_round_guesses:
+            # If the length of the guess is less than the word to guess, we fill the remaining spaces with the placeholder.
+            # We do this since at the start of the each wordle round, we add the first letter of the word to guess as the initial guess.
             length_of_guess = len(guess)
-
-            # If the length of the guess is less than the word to guess length, we add remaining underscores.
-            # We do this since at the start of the round, we hardcoded the first letter only.
-            # Because of this, we do not have 5 values within the guess yet.
-            if length_of_guess < word_to_guess_length:
-                guess += DEFAULT_EMPTY_LETTER_PLACEHOLDER * (word_to_guess_length - length_of_guess)
+            difference_between_lengths = word_to_guess_length - length_of_guess
+            if difference_between_lengths > 0:
+                guess += letter_placeholder * (difference_between_lengths)
 
             wordle_board.append(list(guess))
 
-    # Add empty rows for the remaining attempts
-    missing_guesses_amount = MAX_ATTEMPTS - guessed_amount
+    # If the amount of guesses made is less than the maximum attempts, we fill the remaining rows with placeholders.
+    missing_guesses_amount = get_max_wordle_guess_attempts() - guesses_amount
     for _ in range(missing_guesses_amount):
         placeholder_guess = []
         for _ in range(word_to_guess_length):
-            placeholder_guess.append(DEFAULT_EMPTY_LETTER_PLACEHOLDER)
+            placeholder_guess.append(letter_placeholder)
         wordle_board.append(placeholder_guess)
 
     return wordle_board
 
 """
-    Return the color of a specific letter in the current round's Wordle board.
-    If the position is out of bounds, we return the default terminal color which we have set as a the constant `DEFAULT_TERMINAL_COLOR`.
+    Return the color of the letter which is at the specified position in the last guessed word of the current round for the specified team.
+    If the specified position is out of bounds, we return the default terminal color.
 """
-def get_current_wordle_round_letter_color(team_ID: int, position: tuple) -> str:
+def get_letter_color_for_current_round_last_guessed_word_by_team(team_ID: int, position: tuple) -> str:
     row, col = position
-    current_wordle_round_guesses_color = get_current_wordle_round_guesses_color(team_ID)
+    current_wordle_round_guesses_color = get_current_wordle_round_guesses_color_for_team(team_ID)
 
     if row >= len(current_wordle_round_guesses_color) or col >= len(current_wordle_round_guesses_color[row]):
-        return DEFAULT_TERMINAL_COLOR
+        default_color = get_available_letter_position_colors().get("default", None)
+        return default_color
     return current_wordle_round_guesses_color[row][col]
 
-def get_wordle_board_width(team_ID: int) -> int:
-    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
+"""
+    Return the width of the current round's Wordle board for the specified team.
+"""
+def get_current_wordle_round_board_width_for_team(team_ID: int) -> int:
+    word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
     word_to_guess_length = len(word_to_guess)
 
-    amount_of_space_between_letters = GAP_BETWEEN_LETTERS
-    col_width = amount_of_space_between_letters * 2 + 1 # Spaces on both sides + letter itself
+    col_width = GAP_BETWEEN_BOARD_COLUMNS * 2 + 1 # Spaces on both sides + letter itself
     board_width = word_to_guess_length * col_width
     return board_width
 
 """
     Return a stringified version of the Wordle board for display purposes.
 """
-def get_stringified_wordle_board(team_ID: int) -> str:
-    board_width = get_wordle_board_width(team_ID)
+def get_stringified_current_wordle_round_board_for_team(team_ID: int) -> str:
+    board_width = get_current_wordle_round_board_width_for_team(team_ID)
 
-    # Add text at the top of the board, which we also center
+    # Add the title to show above the board
     title = "WORDLE BOARD"
     stringified_board = f"\n{title.center(board_width)}\n\n"
 
-    wordle_board = get_current_wordle_round_board(team_ID)
+    # Stringify each letter in the board with its corresponding color
+    wordle_board = get_current_wordle_round_board_for_team(team_ID)
     for row_index, row in enumerate(wordle_board):
         for col_index, letter in enumerate(row):
-            letter_position_on_wordle_board = (row_index, col_index)
-            letter_color = get_current_wordle_round_letter_color(team_ID, letter_position_on_wordle_board)
-            stringified_board += f"{" " * GAP_BETWEEN_LETTERS}{colored(letter, letter_color)}{" " * GAP_BETWEEN_LETTERS}"
+            letter_position_within_guess = (row_index, col_index)
+            letter_color = get_letter_color_for_current_round_last_guessed_word_by_team(team_ID, letter_position_within_guess)
+            stringified_board += f"{" " * GAP_BETWEEN_BOARD_COLUMNS}{colored(letter, letter_color)}{" " * GAP_BETWEEN_BOARD_COLUMNS}"
 
         stringified_board += "\n\n"
     
     return stringified_board
 
 """
-    Get the current round information for a specific team.
-    We throw an error if the team does not have any rounds info yet.
+    Return the current round information for the specified team.
 """
-def get_current_wordle_round_info(team_ID: int) -> dict:
+def get_current_wordle_round_for_team(team_ID: int) -> dict:
     teamData = teams_data[team_ID]
-    current_wordle_round_info = teamData["roundsInfo"]
-
-    if not current_wordle_round_info:
-        raise ValueError(f"Team with ID {team_ID} does not have any rounds info initialized. Call `add_single_initial_rounds_info` to add the first round info.")
-    
-    current_wordle_round_info = current_wordle_round_info[-1]
-    return current_wordle_round_info
+    current_wordle_round = teamData["roundsInfo"][-1]
+    return current_wordle_round
 
 """
-    Get the word to guess for the current round of a specific team.
+    Return the word to guess for the current round for the specified team.
 """
-def get_current_wordle_round_word_to_guess(team_ID: int) -> str:
-    current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    word_to_guess = current_wordle_round_info["wordToGuess"]
+def get_current_wordle_round_word_to_guess_for_team(team_ID: int) -> str:
+    current_wordle_round = get_current_wordle_round_for_team(team_ID)
+    word_to_guess = current_wordle_round["wordToGuess"]
     return word_to_guess
 
 """
-    Get the colors of the guesses made in the current round for a specific team.
+    Return the colors of the guesses made in the current round for the specified team.
 """
-def get_current_wordle_round_guesses_color(team_ID: int) -> list:
-    current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    guesses_color = current_wordle_round_info["guessesColor"]
+def get_current_wordle_round_guesses_color_for_team(team_ID: int) -> list:
+    current_wordle_round = get_current_wordle_round_for_team(team_ID)
+    guesses_color = current_wordle_round["guessesColor"]
     return guesses_color
 
 """
-    Get the guesses made in the current round for a specific team.
+    Return the guesses made in the current round for the specified team.
 """
-def get_current_wordle_round_guesses(team_ID: int) -> int:
-    current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    guesses = current_wordle_round_info["guesses"]
+def get_current_wordle_round_guesses_by_team(team_ID: int) -> int:
+    current_wordle_round = get_current_wordle_round_for_team(team_ID)
+    guesses = current_wordle_round["guesses"]
     return guesses
 
 """
-    Returns a random five-letter word from the list of words.
+    Return a random word within the available words we can use for the Wordle game.
 """
 def get_random_word() -> str:
+    # Keep picking random words until we find one which hasn't been used yet.
+    # If the word isn't used yet, we add it to the used words set and return it
     words = five_letter_words.words
-
     while True:
         word = choice(words)
-        if word not in _unavailable_words:
-            _unavailable_words.add(word)
+        if word not in _used_wordle_words:
+            _used_wordle_words.add(word)
             return word
 
 """
     Return a list of colors for each letter in the guess based on its correctness compared to the word to guess.
 """
 def get_guess_letters_color_based_on_word_to_guess(guess: str, word_to_guess: str) -> list:
-    # The colors we will use to indicate correctness
-    colors = {
-        "correct": "green",
-        "misplaced": "yellow",
-        "incorrect": "red"
-    }
+    wordle_guess_colors = get_available_letter_position_colors()
     
-    # Create and return the list of colors for each letter in the guess
+    # Create and return the list of colors for each letter in the guess.
+    #! Do note that we use the letters within the word to guess as placeholders initially
     guess_colors = list(word_to_guess)
     for index, letter in enumerate(guess):
         word_to_guess_letter = word_to_guess[index]
         if letter == word_to_guess_letter:
-            guess_colors[index] = colors["correct"]
+            guess_colors[index] = wordle_guess_colors["correct"]
             continue
 
         if letter in word_to_guess:
-            guess_colors[index] = colors["misplaced"]
+            guess_colors[index] = wordle_guess_colors["misplaced"]
             continue
 
-        guess_colors[index] = colors["incorrect"]
+        guess_colors[index] = wordle_guess_colors["incorrect"]
     
     return guess_colors
+
+"""
+    Return whether any team has won or lost the Wordle game.
+"""
+def any_team_has_won_or_lost_the_wordle_game() -> bool:
+    for team_ID in range(get_amount_of_teams()):
+        team_has_lost = has_team_lost_wordle_game(team_ID)
+        if team_has_lost:
+            return True
+
+        team_has_won = has_team_won_wordle_game(team_ID)
+        if team_has_won:
+            return True
+    return False
+
+"""
+    Return whether the specified team has won the Wordle game.
+"""
+def has_team_won_wordle_game(team_ID: int) -> bool:
+    # If the team has won 10 or more rounds, they win the game
+    rounds_won = amount_of_wordle_rounds_won_by_team(team_ID)
+    if rounds_won >= 10:
+        return True
+    
+    return False
+
+"""
+    Return whether the specified team has lost the Wordle game.
+"""
+def has_team_lost_wordle_game(team_ID: int) -> bool:
+    # If the team has lost 3 rounds in a row, they lose the game
+    rounds_lost_in_a_row = amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID)
+    if rounds_lost_in_a_row >= 3:
+        return True
+    
+    return False
+
 
 ###
 ### SETTERS
@@ -224,9 +258,12 @@ def get_guess_letters_color_based_on_word_to_guess(guess: str, word_to_guess: st
 
 
 """
-    Initialize the roundsInfo for a specific team with the initial round data.
+    Add the initial round info for the specified team within the global teams_data structure.
+    !Do note that we will always add the first letter of the word to guess, and its corresponding color (correct position color) as the initial guess.
+    !This is done to give the player a starting point for their guesses.
 """
-def add_single_initial_rounds_info(team_ID: int) -> None:
+def add_single_initial_rounds_info_for_team(team_ID: int) -> None:
+    wordle_guess_colors = get_available_letter_position_colors() 
     word_to_guess = get_random_word()
 
     teamData = teams_data[team_ID]
@@ -239,74 +276,60 @@ def add_single_initial_rounds_info(team_ID: int) -> None:
         ],
         "guessesColor": [
             [
-                "green"
+                wordle_guess_colors["correct"]
             ]
         ]
     }
-
-    # If the team has no previous rounds played, we set the first guess and its color.
-    rounds_played = len(teamData["roundsInfo"])
-    if rounds_played == 0:
-        initial_rounds_info["guesses"] = [
-            [
-                word_to_guess[0]
-            ]
-        ]
-        initial_rounds_info["guessesColor"] = [
-            [
-                "green"
-            ]
-        ]
-
     teamData["roundsInfo"].append(initial_rounds_info)
 
 """
-    Add a guess to the current round for a specific team, adding both the guess and its corresponding colors.
+    Add the provided guess to the current round for the specified team.
+    !Do note that this function also adds the guessesColor based on the correctness of the guess.
 """
-def add_guess_to_current_round(team_ID: int, guess: str, attempt_number: int) -> None:
-    current_wordle_round_info = get_current_wordle_round_info(team_ID)
-    current_wordle_round_guesses = current_wordle_round_info["guesses"]
+def add_guess_to_current_round_for_team(team_ID: int, guess: str, attempt_number: int) -> None:
+    current_wordle_round = get_current_wordle_round_for_team(team_ID)
+    current_wordle_round_guesses = current_wordle_round["guesses"]
 
-    # If this is a new attempt, we need to add empty lists for the new attempt.
-    # We check 'is equal' here since attempt_number is 0-indexed.
-    # This will be True when the row for the attempt doesn't show letters which are on the correct position yet.
-    amount_of_guesses_made_without_current = len(current_wordle_round_guesses)
-    if amount_of_guesses_made_without_current == attempt_number:
-        current_wordle_round_guesses.append([])
-        current_wordle_round_info["guessesColor"].append([])
-
+    # Add the guess to the current round's guesses
     current_wordle_round_guesses[attempt_number] = guess
 
-    word_to_guess = get_current_wordle_round_word_to_guess(team_ID)
-    guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
-    current_wordle_round_info["guessesColor"][attempt_number] = guess_colors
+    word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
 
-    # If the word is guessed correctly, we do not need to add correct letters to the next attempt row.
+    # Add the colors for the guess based on its correctness
+    guess_colors = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
+    current_wordle_round["guessesColor"][attempt_number] = guess_colors
+
+    # If the word is guessed correctly, we do not need to add the letters and colors to the next attempt row
     if guess == word_to_guess:
         return
 
-    # We create a temporary next attempt row to check if we need to add correct letters to it. 
-    # If we don't do this, the user won't see which letters were correct in the next attempt row.
+    # Go through each letter in the guess and add the letter within the `next_attempt_row_guess` list if it's correct, else we add the placeholder letter
+    # We do the same for the colors within the `next_attempt_row_colors` list. If the letter is correct, we add the correct color, else we add the default terminal color
     next_attempt_row_guess = []
     next_attempt_row_colors = []
+
+    wordle_guess_colors = get_available_letter_position_colors()
+    correct_position_color = wordle_guess_colors["correct"]
+    default_letter_color = wordle_guess_colors["default"]
+    letter_placeholder = get_empty_column_placeholder_for_wordle_board()
+    
     one_or_more_correct_letters_found = False
     for i, guess_color in enumerate(guess_colors):
-        # If the letter is correct, we show it in the next attempt row as well.
-        if guess_color == "green":
-            next_attempt_row_guess.append(guess[i])
-            next_attempt_row_colors.append("green")
-            one_or_more_correct_letters_found = True
+        if guess_color != correct_position_color:
+            next_attempt_row_guess.append(letter_placeholder)
+            next_attempt_row_colors.append(default_letter_color)
             continue
-        
-        # If not, we just add the placeholder and default color.
-        # This is done to check if one or more correct letters were found in the current guess.
-        next_attempt_row_guess.append(DEFAULT_EMPTY_LETTER_PLACEHOLDER)
-        next_attempt_row_colors.append(DEFAULT_TERMINAL_COLOR)
 
-    # If one or more correct letters were found, we add the next attempt row to show the correct letters.
+        next_attempt_row_guess.append(guess[i])
+        next_attempt_row_colors.append(correct_position_color)
+        one_or_more_correct_letters_found = True
+
+    # If one or more correct letters of the guess were on the correct position, we add the next attempt row's guess and colors to the current round's data.
+    #! Do note that even if we add the next attempt row's guess and colors, after the user makes their next guess, they would just be overwritten.
+    #! It is only for display purposes to show the user which letters they got correct in the correct position.
     if one_or_more_correct_letters_found:
         current_wordle_round_guesses.append(next_attempt_row_guess)
-        current_wordle_round_info["guessesColor"].append(next_attempt_row_colors)
+        current_wordle_round["guessesColor"].append(next_attempt_row_colors)
 
 
 ###
@@ -317,7 +340,7 @@ def add_guess_to_current_round(team_ID: int, guess: str, attempt_number: int) ->
 """
     Validate if the provided word is a valid five-letter word, and is a word which is an option for the user to guess.
 """
-def is_valid_guess(guess: str) -> dict:
+def is_valid_wordle_guess(guess: str) -> dict:
     if len(guess) != 5:
         return {
             "isValid": False,
@@ -334,45 +357,3 @@ def is_valid_guess(guess: str) -> dict:
         "isValid": True,
         "message": ""
     }
-
-"""
-    Returns whether the team has won the Wordle game based on the winning conditions.
-"""
-def team_has_won_game(team_ID: int) -> bool:
-    won_bingo_game = did_team_win_bingo_game(team_ID)
-    if won_bingo_game:
-        return True
-    
-    # If the team has won 10 or more rounds, they win the game.
-    rounds_won = amount_of_rounds_won_by_team(team_ID)
-    if rounds_won >= 10:
-        return True
-    
-    return False
-
-def team_has_lost_game(team_ID: int) -> bool:
-    # If the team has grabbed 3 or more red balls, they lose the game.
-    red_balls_grabbed = get_amount_of_color_balls_grabbed(team_ID, "red")
-    if red_balls_grabbed >= 3:
-        return True
-    
-    # If the team has lost 3 rounds in a row, they lose the game.
-    rounds_lost_in_a_row = amount_of_rounds_lost_in_a_row(team_ID)
-    if rounds_lost_in_a_row >= 3:
-        return True
-    
-    return False
-
-"""
-    Return whether any team has won or lost the Wordle game.
-"""
-def any_team_has_won_or_lost_the_wordle_game() -> bool:
-    for team_ID in range(TEAMS_AMOUNT):
-        team_has_lost = team_has_lost_game(team_ID)
-        if team_has_lost:
-            return True
-
-        team_has_won = team_has_won_game(team_ID)
-        if team_has_won:
-            return True
-    return False

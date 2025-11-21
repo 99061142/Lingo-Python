@@ -1,23 +1,21 @@
 from termcolor import colored
-from app.constants import BINGO_BOARD_SIZE, GAP_BETWEEN_LETTERS
+
+from app.bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo_number_colors
+from ..app_constants import GAP_BETWEEN_BOARD_COLUMNS
 from ..teams_data import teams_data
 from random import choice
 from typing import List
 
-"""
-    Returns a random number from the given list of numbers.
-"""
-def get_random_number(numbers: List[int]) -> int:
-    if not numbers:
-        raise ValueError("The list of numbers to select a random number with is empty.")
 
-    random_number = choice(numbers)
-    return random_number
+###
+### GETTERS
+###
+
 
 """
-    Creates and returns a list of even numbers within the given range
+    Returns a list of even numbers within the given range
 """
-def create_even_numbers_list(start: int, end: int) -> List[int]:
+def get_even_numbers_list(start: int, end: int) -> List[int]:
     even_numbers = []
     
     # If the start isn't even, we add 1 to make it even
@@ -28,9 +26,9 @@ def create_even_numbers_list(start: int, end: int) -> List[int]:
     return even_numbers
 
 """
-    Creates and returns a list of uneven numbers within the given range
+    Returns a list of uneven numbers within the given range
 """
-def create_uneven_numbers_list(start: int, end: int) -> List[int]:
+def get_uneven_numbers_list(start: int, end: int) -> List[int]:
     uneven_numbers = []
 
     # If the start isn't uneven, we add 1 to make it uneven
@@ -41,26 +39,27 @@ def create_uneven_numbers_list(start: int, end: int) -> List[int]:
     return uneven_numbers
 
 """
-    Returns a 4x4 bingo board with randomized numbers for the given team_ID.
-    The team_ID can only be 0 or 1 in our current implementation.
+    Returns a bingo board with randomized numbers for the specified team.
 """
-def create_randomized_bingo_board(team_ID: int) -> List[List[int]]:
+def get_randomized_bingo_board_for_team(team_ID: int) -> List[List[int]]:
     # Hardcoded range for bingo numbers
     start = 1
     end = 100
 
-    # Team 0 gets even numbers, team 1 gets uneven numbers
-    if team_ID == 0:
-        available_numbers = create_even_numbers_list(start, end)
+    # If the ID of the team is even, we use even numbers for the bingo board.
+    # Otherwise, we use uneven numbers.
+    if team_ID % 2 == 0:
+        available_numbers = get_even_numbers_list(start, end)
     else:
-        available_numbers = create_uneven_numbers_list(start, end)
+        available_numbers = get_uneven_numbers_list(start, end)
 
-    # Create and return the bingo board
+    # Create the bingo board with randomized numbers.
     bingo_board = []
-    for _ in range(BINGO_BOARD_SIZE):
+    bingo_board_size = get_bingo_board_size()
+    for _ in range(bingo_board_size):
         bingo_board_row = []
-        for _ in range(BINGO_BOARD_SIZE):
-            number = get_random_number(available_numbers)
+        for _ in range(bingo_board_size):
+            number = choice(available_numbers)
             available_numbers.remove(number)
             bingo_board_row.append(number)
         bingo_board.append(bingo_board_row)
@@ -68,23 +67,23 @@ def create_randomized_bingo_board(team_ID: int) -> List[List[int]]:
     return bingo_board
 
 """
-    Returns the dictionary which holds the grabbed balls information for the given team_ID.
+    Returns the dictionary which holds the grabbed balls information by the specified team.
 """
-def get_balls_grabbed(team_ID: int) -> dict:
+def get_balls_grabbed_by_team(team_ID: int) -> dict:
     team_data = teams_data[team_ID]
     balls_grabbed = team_data["balls"]["grabbed"]
     return balls_grabbed
 
 """
-    Returns the amount of color balls grabbed for the given team_ID.
+    Returns the amount of color balls grabbed by the specified team.
 """
-def get_amount_of_color_balls_grabbed(team_ID: int, color: str) -> int:
-    balls_grabbed = get_balls_grabbed(team_ID)
+def get_amount_of_color_balls_grabbed_by_team(team_ID: int, color: str) -> int:
+    balls_grabbed = get_balls_grabbed_by_team(team_ID)
     amount_of_color_balls_grabbed = balls_grabbed[color]
     return amount_of_color_balls_grabbed
 
 """
-    Returns the set of filled positions on the bingo board for the given team_ID.
+    Returns the set of filled positions on the bingo board for the specified team.
 """
 def get_filled_positions_for_team(team_ID: int) -> set:
     team_data = teams_data[team_ID]
@@ -93,77 +92,80 @@ def get_filled_positions_for_team(team_ID: int) -> set:
     return filled_positions
 
 """
-    Returns whether the bingo board has a horizontal line for the given team_ID.
+    Returns whether the bingo board has a horizontal line for the specified team.
 """
 def bingo_board_has_horizontal_line_for_team(team_ID: int) -> bool:
     filled_positions = get_filled_positions_for_team(team_ID)
 
-    for row_index in range(BINGO_BOARD_SIZE):
-        horizontal_row_is_filled = True
-        for col_index in range(BINGO_BOARD_SIZE):
+    bingo_board_size = get_bingo_board_size()
+    for row_index in range(bingo_board_size):
+        horizontal_line_is_marked = True
+        for col_index in range(bingo_board_size):
             position = (row_index, col_index)
 
             if position not in filled_positions:
-                horizontal_row_is_filled = False
+                horizontal_line_is_marked = False
                 break
         
-        if horizontal_row_is_filled:
+        if horizontal_line_is_marked:
             return True
     
     return False
 
 """
-    Returns whether the bingo board has a vertical line for the given team_ID.
+    Returns whether the bingo board has a vertical line for the specified team.
 """
 def bingo_board_has_vertical_line_for_team(team_ID: int) -> bool:
     filled_positions = get_filled_positions_for_team(team_ID)
 
-    for col_index in range(BINGO_BOARD_SIZE):
-        vertical_row_is_filled = True
-        for row_index in range(BINGO_BOARD_SIZE):
+    bingo_board_size = get_bingo_board_size()
+    for col_index in range(bingo_board_size):
+        vertical_line_is_marked = True
+        for row_index in range(bingo_board_size):
             position = (row_index, col_index)
 
             if position not in filled_positions:
-                vertical_row_is_filled = False
+                vertical_line_is_marked = False
                 break
         
-        if vertical_row_is_filled:
+        if vertical_line_is_marked:
             return True
     
     return False
 
 """
-    Returns whether the bingo board has a diagonal line for the given team_ID.
+    Returns whether the bingo board has a diagonal line for the specified team.
 """
 def bingo_board_has_diagonal_line_for_team(team_ID: int) -> bool:
     filled_positions = get_filled_positions_for_team(team_ID)
+    bingo_board_size = get_bingo_board_size()
 
     # Check top-left to bottom-right diagonal
-    diagonal_row_is_filled = True
-    for index in range(BINGO_BOARD_SIZE):
+    diagonal_line_is_marked = True
+    for index in range(bingo_board_size):
         position = (index, index)
         if position not in filled_positions:
-            diagonal_row_is_filled = False
+            diagonal_line_is_marked = False
             break
-    if diagonal_row_is_filled:
+    if diagonal_line_is_marked:
         return True
 
     # Check top-right to bottom-left diagonal
-    # We default the `diagonal_row_is_filled` variable again to True for the next check
-    diagonal_row_is_filled = True
-    for index in range(BINGO_BOARD_SIZE):
-        column_index = BINGO_BOARD_SIZE - 1 - index
+    # We default the `diagonal_line_is_marked` variable again to True for the next check
+    diagonal_line_is_marked = True
+    for index in range(bingo_board_size):
+        column_index = bingo_board_size - 1 - index
         position = (index, column_index)
         if position not in filled_positions:
-            diagonal_row_is_filled = False
+            diagonal_line_is_marked = False
             break
     
-    return diagonal_row_is_filled
+    return diagonal_line_is_marked
 
 """
-    Returns whether the bingo board has 1 or more lines for the given team_ID.
+    Returns whether the bingo board has 1 or more lines marked for the specified team.
 """
-def bingo_board_has_line_for_team(team_ID: int) -> bool:
+def bingo_board_has_filled_line_for_team(team_ID: int) -> bool:
     has_horizontal_line = bingo_board_has_horizontal_line_for_team(team_ID)
     if has_horizontal_line:
         return True
@@ -178,50 +180,62 @@ def bingo_board_has_line_for_team(team_ID: int) -> bool:
 
     return False
 
+"""
+    Returns the bingo board for the specified team.
+    !Do note that this is a 2D list representing the bingo board.
+    !This is not a stringified version of the bingo board for display purposes.
+"""
 def get_bingo_board_for_team(team_ID: int) -> List[List[int]]:
     team_data = teams_data[team_ID]
     bingo_board = team_data["bingoBoard"]["board"]
     return bingo_board
 
+"""
+    Returns the filled positions on the bingo board for the specified team.
+"""
 def get_filled_bingo_board_positions_for_team(team_ID: int) -> set:
     team_data = teams_data[team_ID]
     filled_positions = team_data["bingoBoard"]["filledPositions"]
     return filled_positions
 
-""""
-    Returns a stringified version of the bingo board for the given team_ID.
+"""
+    Returns a stringified version of the bingo board for the specified team.
 """
 def get_stringified_bingo_board_for_team(team_ID: int) -> str:
     bingo_board = get_bingo_board_for_team(team_ID)
     filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+    bingo_board_size = get_bingo_board_size()
 
     stringified_board = ""
-    for row_index in range(BINGO_BOARD_SIZE):
-        for col_index in range(BINGO_BOARD_SIZE):
+    for row_index in range(bingo_board_size):
+        for col_index in range(bingo_board_size):
             number = bingo_board[row_index][col_index]
-            position = (row_index, col_index)
 
             # Center the number within the defined gap
-            # E.g. if the GAP_BETWEEN_LETTERS is 2, 
+            # E.g. if the GAP_BETWEEN_BOARD_COLUMNS is 2, 
             # * The number 7 would be formatted as " 7 "
             # * The 23, it would be "23 "
             # * And 100 would be "100"
-            # What we see here is that it first centers the number in a field of width GAP_BETWEEN_LETTERS,
+            # What we see here is that it first centers the number in a field of width GAP_BETWEEN_BOARD_COLUMNS,
             # and if it increases the length of the number, it first adds spaces to the left until it reaches the width,
             # and then adds spaces to the right until it reaches the width.
-            number_str = f"{number:^{GAP_BETWEEN_LETTERS}}"
+            number_str = f"{number:^{GAP_BETWEEN_BOARD_COLUMNS}}"
             
+            position = (row_index, col_index)
             if position in filled_positions:
-                number_str = colored(number_str, "green")
+                number_color = get_bingo_number_colors().get("marked")
+            else:
+                number_color = get_bingo_number_colors().get("unmarked")
+            number_str = colored(number_str, number_color)
             
-            stringified_board += f"{" " * GAP_BETWEEN_LETTERS}{number_str}{" " * GAP_BETWEEN_LETTERS}"
+            stringified_board += f"{" " * GAP_BETWEEN_BOARD_COLUMNS}{number_str}{" " * GAP_BETWEEN_BOARD_COLUMNS}"
 
         stringified_board += "\n\n"
 
     return stringified_board
 
 """
-    Returns the remaining balls information for the given team_ID.
+    Returns a dictionary which holds the remaining balls information for the specified team.
 """
 def get_remaining_balls_for_team(team_ID: int) -> dict:
     team_data = teams_data[team_ID]
@@ -229,7 +243,7 @@ def get_remaining_balls_for_team(team_ID: int) -> dict:
     return balls_remaining
 
 """
-    Returns the amount of remaining red balls for the given team_ID.
+    Returns how many remanining color balls there are for the specified team, and color.
 """
 def get_remaining_color_balls_for_team(team_ID: int, color: str) -> int:
     balls_remaining = get_remaining_balls_for_team(team_ID)
@@ -237,30 +251,17 @@ def get_remaining_color_balls_for_team(team_ID: int, color: str) -> int:
     return remaining_color_balls
 
 """
-    Increases the amount of grabbed color balls for the given team_ID by 1.
+    Returns a list of remaining numbers on the bingo board for the specified team.
 """
-def increase_grabbed_color_balls_for_team(team_ID: int, color: str) -> None:
-    balls_grabbed = get_balls_grabbed(team_ID)
-    balls_grabbed[color] += 1
-
-"""
-    Decreases the amount of remaining color balls for the given team_ID by 1.
-"""
-def decrease_remaining_color_balls_for_team(team_ID: int, color: str) -> None:
-    balls_remaining = get_remaining_balls_for_team(team_ID)
-    balls_remaining[color] -= 1
-
-    increase_grabbed_color_balls_for_team(team_ID, color)
-
 def get_remaining_bingo_board_numbers_for_team(team_ID: int) -> List[int]:
     bingo_board = get_bingo_board_for_team(team_ID)
     filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
-
+    bingo_board_size = get_bingo_board_size()
+    
     remaining_numbers = []
-    for row_index in range(BINGO_BOARD_SIZE):
-        for col_index in range(BINGO_BOARD_SIZE):
+    for row_index in range(bingo_board_size):
+        for col_index in range(bingo_board_size):
             position = (row_index, col_index)
-
             if position not in filled_positions:
                 number = bingo_board[row_index][col_index]
                 remaining_numbers.append(number)
@@ -268,8 +269,8 @@ def get_remaining_bingo_board_numbers_for_team(team_ID: int) -> List[int]:
     return remaining_numbers
 
 """
-    Return a list which represents the bingo board pit for the given team_ID.
-    It contains the remaining colored balls (red and green), as well as the remaining numbers on the bingo board.
+    Return a list which represents the bingo board pit for the specified team.
+    It contains the remaining colored balls (red and green), as well as the remaining numbers on the specified team's bingo board.
 """
 def get_available_bingo_board_pit_balls_for_team(team_ID: int) -> List:
     bingo_board_pit_balls = []
@@ -291,31 +292,65 @@ def get_available_bingo_board_pit_balls_for_team(team_ID: int) -> List:
 
     return bingo_board_pit_balls
 
-def mark_number_on_bingo_board(team_ID: int, grabbled_number: int) -> None:
-    bingo_board = get_bingo_board_for_team(team_ID)
-    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
-
-    for row_index in range(BINGO_BOARD_SIZE):
-        for col_index in range(BINGO_BOARD_SIZE):
-            number = bingo_board[row_index][col_index]
-
-            if number == grabbled_number:
-                position = (row_index, col_index)
-                filled_positions.add(position)
-                return
-
 """
-    Returns whether the player has won the bingo game for the given team_ID.
+    Returns whether the specified team has won the bingo game.
 """            
-def did_team_win_bingo_game(team_ID: int) -> bool:
+def has_team_won_bingo_game(team_ID: int) -> bool:
     # If the team has grabbed 3 or more green balls, they win the game.
-    green_balls_grabbed = get_amount_of_color_balls_grabbed(team_ID, "green")
+    green_balls_grabbed = get_amount_of_color_balls_grabbed_by_team(team_ID, "green")
     if green_balls_grabbed >= 3:
         return True
     
     # If the team has any line on their bingo board, they win the game.
-    has_any_filled_lines_on_bingo_board = bingo_board_has_line_for_team(team_ID)
+    has_any_filled_lines_on_bingo_board = bingo_board_has_filled_line_for_team(team_ID)
     if has_any_filled_lines_on_bingo_board:
         return True
     
     return False
+
+"""
+    Returns whether the specified team has lost the bingo game.
+"""            
+def has_team_lost_bingo_game(team_ID: int) -> bool:
+    # If the team has grabbed 3 or more red balls, they lose the bingo game.
+    red_balls_grabbed = get_amount_of_color_balls_grabbed_by_team(team_ID, "red")
+    if red_balls_grabbed >= 3:
+        return True
+    
+    return False
+
+
+###
+### SETTERS
+###
+
+
+"""
+    Increases the amount of grabbed color balls for the specified team and color by 1.
+"""
+def increase_grabbed_color_balls_for_team(team_ID: int, color: str) -> None:
+    balls_grabbed = get_balls_grabbed_by_team(team_ID)
+    balls_grabbed[color] += 1
+
+"""
+    Decreases the amount of remaining color balls for the specified team and color by 1.
+"""
+def decrease_remaining_color_balls_for_team(team_ID: int, color: str) -> None:
+    balls_remaining = get_remaining_balls_for_team(team_ID)
+    balls_remaining[color] -= 1
+
+"""
+    Marks the grabbled number on the bingo board for the specified team.
+"""
+def mark_number_on_bingo_board(team_ID: int, grabbled_number: int) -> None:
+    bingo_board = get_bingo_board_for_team(team_ID)
+    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+
+    bingo_board_size = get_bingo_board_size()
+    for row_index in range(bingo_board_size):
+        for col_index in range(bingo_board_size):
+            number = bingo_board[row_index][col_index]
+            if number == grabbled_number:
+                position = (row_index, col_index)
+                filled_positions.add(position)
+                return

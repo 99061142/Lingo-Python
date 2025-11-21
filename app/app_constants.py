@@ -1,0 +1,1 @@
+GAP_BETWEEN_BOARD_COLUMNS = 2 # Number of spaces between columns on both the Wordle and Bingo board
