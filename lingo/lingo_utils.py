@@ -1,5 +1,5 @@
 from termcolor import colored
-from app.app_settings.app_settings_utils import get_amount_of_teams
+from .lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .wordle.wordle_utils import has_team_lost_wordle_game, has_team_won_wordle_game
 from .teams_data import teams_data
 from .bingo.bingo_utils import get_randomized_bingo_board_for_team, has_team_lost_bingo_game, has_team_won_bingo_game

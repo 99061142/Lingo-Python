@@ -1,5 +1,5 @@
-from .app_utils import print_message, set_winning_team, initialize_teams_data
-from .app_settings.app_settings_utils import get_amount_of_teams, get_starting_team_ID
+from .lingo_utils import print_message, set_winning_team, initialize_teams_data
+from .lingo_settings.lingo_settings_utils import get_amount_of_teams, get_starting_team_ID
 from .wordle.wordle import play_wordle_round_for_team
 from .wordle.wordle_utils import any_team_has_won_or_lost_the_wordle_game, has_team_guessed_word_correctly_in_current_round
 from .bingo.bingo import play_bingo_round_for_team

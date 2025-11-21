@@ -1,7 +1,7 @@
 from json import load
 
 # Load Bingo settings from the JSON file
-with open('app/bingo/bingo_settings/bingo_settings.json', 'r') as file:
+with open('lingo/bingo/bingo_settings/bingo_settings.json', 'r') as file:
     bingo_settings = load(file)
 
 

@@ -1,7 +1,7 @@
 from json import load
 
 # Load game settings from the JSON file
-with open('app/app_settings/app_settings.json', 'r') as settings_file:
+with open('lingo/lingo_settings/lingo_settings.json', 'r') as settings_file:
     game_settings = load(settings_file)
 
 

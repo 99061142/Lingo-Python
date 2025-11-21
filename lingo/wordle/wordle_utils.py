@@ -2,8 +2,8 @@ from ..teams_data import teams_data
 from .words import five_letter_words
 from random import choice
 from termcolor import colored
-from ..app_constants import GAP_BETWEEN_BOARD_COLUMNS
-from ..app_settings.app_settings_utils import get_amount_of_teams
+from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
+from ..lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts, get_empty_column_placeholder_for_wordle_board, get_available_letter_position_colors
 
 

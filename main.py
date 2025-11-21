@@ -1,4 +1,4 @@
-from app.app import start_game
+from lingo.lingo import start_game
 
 """
     Start the Lingo game application.

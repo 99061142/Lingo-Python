@@ -1,4 +1,4 @@
-from ..app_utils import print_message
+from ..lingo_utils import print_message
 from .bingo_utils import *
 from time import sleep
 from typing import Union

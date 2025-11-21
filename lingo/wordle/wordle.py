@@ -1,5 +1,5 @@
-from app.wordle.wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts
-from ..app_utils import print_message
+from ..wordle.wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts
+from ..lingo_utils import print_message
 from .wordle_utils import *
 
 """

@@ -1,7 +1,7 @@
 from termcolor import colored
 
-from app.bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo_number_colors
-from ..app_constants import GAP_BETWEEN_BOARD_COLUMNS
+from ..bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo_number_colors
+from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
 from ..teams_data import teams_data
 from random import choice
 from typing import List

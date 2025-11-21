@@ -1,6 +1,6 @@
 from json import load
 
-with open("app/wordle/wordle_settings/wordle_settings.json", "r") as settings_file:
+with open("lingo/wordle/wordle_settings/wordle_settings.json", "r") as settings_file:
     wordle_settings = load(settings_file)
 
 
