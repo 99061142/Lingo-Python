@@ -44,7 +44,7 @@ def get_uneven_numbers_list(start: int, end: int) -> List[int]:
 def get_randomized_bingo_board_for_team(team_ID: int) -> List[List[int]]:
     # Hardcoded range for bingo numbers
     start = 1
-    end = 100
+    end = 99
 
     # If the ID of the team is even, we use even numbers for the bingo board.
     # Otherwise, we use uneven numbers.
