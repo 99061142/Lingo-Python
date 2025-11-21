@@ -4,12 +4,12 @@ This is my end project assignment for year 1 of my college course in Software De
 ## Why didn't I make use of classes, or any other 'non-basic' code?
 Because of the rule that I can only make use of whatever we have learned within Python, I can't use classes. This is because we have only learned up to the use of functions/lambda's.
 
-## Win conditions
+## Win conditions (One or more of the following options:)
 * The team has grabbed 3 green balls within the bingo ball pit.
 * The team has a vertical, horizontal or diagonal line on the bingo board.
 * The team has guessed 10 words correctly.
 
-## Lose conditions
+## Lose conditions (One or more of the following options:)
 * The team has grabbed 3 red balls within the bingo ball pit.
 * The team didn't guess the word for 3 rounds straight.
 
