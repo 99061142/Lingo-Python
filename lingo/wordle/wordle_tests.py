@@ -16,14 +16,19 @@ def test_random_word_error_handling():
     for _ in range(len(words)):
         get_random_word(words, used_words)
 
+
+    throws_exception = False
     try:
         get_random_word(words, used_words)
-    except Exception as error:
-        test(
-            "Getting a random word when all words have been used should raise an exception.",
-            "All available Wordle words have been used.",
-            str(error),
-        )
+    except Exception:
+        throws_exception = True
+
+    expected = True
+    test(
+        "Getting a random word when all words have been used should raise an exception.",
+        expected,
+        throws_exception,
+    )
 test_random_word_error_handling()
 
 
