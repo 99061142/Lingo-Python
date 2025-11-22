@@ -7,7 +7,7 @@ from lingo.teams_data import teams_data
 from lingo.lingo_utils import initialize_teams_data
 from test_lib import report, test
 from lingo.lingo_settings.lingo_settings_utils import get_starting_team_ID
-from lingo.bingo.bingo_utils import bingo_board_has_horizontal_line_for_team, bingo_board_has_vertical_line_for_team, get_even_numbers_list_from_range, get_odd_numbers_list_from_range, get_randomized_bingo_board_for_team, mark_number_on_bingo_board_for_team, bingo_board_has_diagonal_line_for_team, unmark_number_on_bingo_board_for_team
+from lingo.bingo.bingo_utils import bingo_board_has_horizontal_line_for_team, bingo_board_has_vertical_line_for_team, get_even_numbers_list_from_range, get_odd_numbers_list_from_range, get_randomized_bingo_board_for_team, has_team_lost_bingo_game, has_team_won_bingo_game, increase_grabbed_color_balls_for_team, mark_number_on_bingo_board_for_team, bingo_board_has_diagonal_line_for_team, unmark_number_on_bingo_board_for_team
 from lingo.bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size
 
 """
@@ -218,6 +218,89 @@ def test_whether_bingo_board_has_diagonal_line():
     )
 test_whether_bingo_board_has_diagonal_line()
 
+"""
+    Test whether the function which returns if a team won the bingo game works correctly.
+"""
+def test_whether_team_has_won_bingo_game():
+    # First we initialize the teams data to ensure we have the team data to work with
+    initialize_teams_data()
+    
+    team_ID = get_starting_team_ID()
+    expected = True
+
+    bingo_board_size = get_bingo_board_size()
+    marked_numbers = []
+
+    # We simulate the team winning by marking all numbers in the first row
+    for col_index in range(bingo_board_size):
+        number_to_mark = teams_data[team_ID]["bingoBoard"]["board"][0][col_index]
+        mark_number_on_bingo_board_for_team(team_ID, number_to_mark)
+
+    result = has_team_won_bingo_game(team_ID)
+    if not result:
+        test(
+            "The team should have won the bingo game after marking all numbers in a horizontal line.",
+            expected,
+            result,
+        )
+
+    # Unmark the numbers for the next test.
+    for marked_number in marked_numbers:
+        unmark_number_on_bingo_board_for_team(team_ID, marked_number)
+
+    # Simulate the team having 3 green balls
+    for _ in range(3):
+        increase_grabbed_color_balls_for_team(team_ID, "green")
+
+    result = has_team_won_bingo_game(team_ID)
+
+    if not result:
+        test(
+            "The team should have won the bingo game after grabbing 3 green balls.",
+            expected,
+            result,
+        )
+        return
+
+    test(
+        "The team should have won the bingo game if they have a marked line on their bingo board OR have grabbed 3 green balls.",
+        expected,
+        result,
+    )
+test_whether_team_has_won_bingo_game()
+
+
+"""
+    Test whether the function which returns if the team lost the bingo game works correctly.
+"""
+def test_whether_team_has_lost_bingo_game():
+    # First we initialize the teams data to ensure we have the team data to work with
+    initialize_teams_data()
+    
+    team_ID = get_starting_team_ID()
+    expected = True
+
+    result = has_team_won_bingo_game(team_ID)
+
+    # Simulate the team having 3 red balls
+    for _ in range(3):
+        increase_grabbed_color_balls_for_team(team_ID, "red")
+
+    result = has_team_lost_bingo_game(team_ID)
+    if not result:
+        test(
+            "The team should have lost the bingo game after grabbing 3 red balls.",
+            expected,
+            result,
+        )
+        return
+    
+    test(
+        "The team should have lost the bingo game if they have grabbed 3 red balls.",
+        expected,
+        result,
+    )
+test_whether_team_has_lost_bingo_game()
 
 # Run the report when this file is executed directly instead of within the tests.py file
 if __name__ == "__main__":
