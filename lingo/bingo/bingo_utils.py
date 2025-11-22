@@ -340,7 +340,7 @@ def decrease_remaining_color_balls_for_team(team_ID: int, color: str) -> None:
 """
     Marks the grabbled number on the bingo board for the specified team.
 """
-def mark_number_on_bingo_board(team_ID: int, grabbled_number: int) -> None:
+def mark_number_on_bingo_board_for_team(team_ID: int, grabbled_number: int) -> None:
     bingo_board = get_bingo_board_for_team(team_ID)
     filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
 
@@ -351,4 +351,22 @@ def mark_number_on_bingo_board(team_ID: int, grabbled_number: int) -> None:
             if number == grabbled_number:
                 position = (row_index, col_index)
                 filled_positions.add(position)
+                return
+
+"""
+    Unmarks the specified number on the bingo board for the specified team.
+    This is mainly used for testing purposes, since in normal gameplay, we would never unmark a specific number.
+"""
+def unmark_number_on_bingo_board_for_team(team_ID: int, number_to_unmark: int) -> None:
+    bingo_board = get_bingo_board_for_team(team_ID)
+    filled_positions = get_filled_bingo_board_positions_for_team(team_ID)
+
+    bingo_board_size = get_bingo_board_size()
+    for row_index in range(bingo_board_size):
+        for col_index in range(bingo_board_size):
+            number = bingo_board[row_index][col_index]
+            if number == number_to_unmark:
+                position = (row_index, col_index)
+                if position in filled_positions:
+                    filled_positions.remove(position)
                 return

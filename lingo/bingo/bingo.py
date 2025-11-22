@@ -34,7 +34,7 @@ def grab_bingo_ball_for_team(team_ID: int) -> Union[str, int]:
     # If not, it means the team grabbed a number within their bingo board.
     # In that case, we print the grabbed number, mark the number on the bingo board, and return the grabbed number
     print_message(f"Team {team_ID + 1} grabbed ball number {grabbed_ball}!")
-    mark_number_on_bingo_board(team_ID, grabbed_ball)
+    mark_number_on_bingo_board_for_team(team_ID, grabbed_ball)
     return grabbed_ball
 
 """
