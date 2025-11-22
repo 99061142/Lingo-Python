@@ -44,6 +44,10 @@ def play_wordle_round_for_team(team_ID: int) -> None:
             print_color = "green"
             print_message(win_message, print_color)
             return
+        
+    fail_message = f"Team {team_ID + 1} failed to guess the word within the maximum attempts. The correct word was '{word_to_guess}'."
+    print_color = "red"
+    print_message(fail_message, print_color)
 
 """
     Print which team's turn it is.

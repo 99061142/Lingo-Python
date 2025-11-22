@@ -56,7 +56,9 @@ def play_bingo_round_for_team(team_ID: int) -> None:
     
         # If the grabbed ball is red, and it's not the last attempt, end the bingo turn early
         if grabbed_ball == "red" and attempt != max_grab_attempts:
-            print_message(f"Team {team_ID + 1} grabbed a red ball and ends their bingo turn early!")
+            fail_message = f"Team {team_ID + 1} grabbed a red ball and ends their bingo turn early!"
+            print_color = "red"
+            print_message(fail_message, print_color)
             break
         
         print_bingo_board_for_team(team_ID)
@@ -71,3 +73,8 @@ def play_bingo_round_for_team(team_ID: int) -> None:
             print_color = "green"
             print_message(win_message, print_color)
             return
+        
+    if get_amount_of_color_balls_grabbed_by_team(team_ID, "red") >= 3:
+        fail_message = f"Team {team_ID + 1} has grabbed 3 red balls and loses the bingo game!"
+        print_color = "red"
+        print_message(fail_message, print_color)

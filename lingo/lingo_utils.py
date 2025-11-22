@@ -11,6 +11,14 @@ from .bingo.bingo_utils import get_randomized_bingo_board_for_team, has_team_los
 
 
 """
+    Returns the next team ID in a circular manner.
+"""
+def get_next_team_ID(current_team_ID: int) -> int:
+    teams_amount = get_amount_of_teams()
+    next_team_ID = (current_team_ID + 1) % teams_amount
+    return next_team_ID
+
+"""
     Returns the initial data structure for a single team with the given teamID.
 """
 def get_initial_team_data_for_team(team_ID: int) -> dict:
