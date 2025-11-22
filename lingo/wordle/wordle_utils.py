@@ -181,12 +181,9 @@ def get_current_wordle_round_guesses_by_team(team_ID: int) -> int:
 
 """
     Return a random word within the available words we can use for the Wordle game.
+    If all words have been used, we raise an exception.
 """
-def get_random_word(used_wordle_words: set = _used_wordle_words) -> str:
-    # Keep picking random words until we find one which hasn't been used yet.
-    # If the word isn't used yet, we add it to the used words set and return it
-    words = five_letter_words.words
-
+def get_random_word(words: list = five_letter_words.words, used_wordle_words: set = _used_wordle_words) -> str:
     # If all words have been used, we raise an exception
     if len(used_wordle_words) >= len(words):
         raise Exception("All available Wordle words have been used.")
