@@ -342,11 +342,13 @@ def add_guess_to_current_round_for_team(team_ID: int, guess: str, attempt_number
 """
     Validate if the provided word is a valid five-letter word, and is a word which is an option for the user to guess.
 """
-def is_valid_wordle_guess(guess: str) -> dict:
-    if len(guess) != 5:
+def is_valid_wordle_guess(guess: str, team_ID: int) -> dict:
+    word_to_guess_length = len(get_current_wordle_round_word_to_guess_for_team(team_ID))
+
+    if len(guess) != word_to_guess_length:
         return {
             "isValid": False,
-            "message": "The word must be exactly 5 letters long."
+            "message": f"The word must be exactly {word_to_guess_length} letters long."
         }
     
     if guess not in five_letter_words.words:

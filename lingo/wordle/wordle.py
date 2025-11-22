@@ -7,10 +7,10 @@ from .wordle_utils import *
     If the guess is valid, we return it.
     If not, we print an error message and ask again.
 """
-def ask_wordle_word_guess(attempt_number: int) -> str:
+def ask_wordle_word_guess(attempt_number: int, team_ID: int) -> str:
     while True:
         guess = input(f"Enter your 5-letter guess for row {attempt_number + 1}: ").strip().lower()
-        guess_validation = is_valid_wordle_guess(guess)
+        guess_validation = is_valid_wordle_guess(guess, team_ID)
 
         if guess_validation["isValid"]:
             return guess
@@ -34,7 +34,7 @@ def play_wordle_round_for_team(team_ID: int) -> None:
     for current_attempt in range(get_max_wordle_guess_attempts()):
         print_wordle_board_for_team(team_ID)
         
-        guess = ask_wordle_word_guess(current_attempt)
+        guess = ask_wordle_word_guess(current_attempt, team_ID)
         add_guess_to_current_round_for_team(team_ID, guess, current_attempt)
 
         if guess == word_to_guess:
