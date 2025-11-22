@@ -1,11 +1,9 @@
 from termcolor import colored
-
-from ..bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo_number_colors
-from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
-from ..teams_data import teams_data
 from random import choice
 from typing import List
-
+from .bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo_number_colors
+from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
+from ..teams_data import teams_data
 
 ###
 ### GETTERS
@@ -15,7 +13,7 @@ from typing import List
 """
     Returns a list of even numbers within the given range
 """
-def get_even_numbers_list(start: int, end: int) -> List[int]:
+def get_even_numbers_list_from_range(start: int, end: int) -> List[int]:
     even_numbers = []
     
     # If the start isn't even, we add 1 to make it even
@@ -26,17 +24,17 @@ def get_even_numbers_list(start: int, end: int) -> List[int]:
     return even_numbers
 
 """
-    Returns a list of uneven numbers within the given range
+    Returns a list of odd numbers within the given range
 """
-def get_uneven_numbers_list(start: int, end: int) -> List[int]:
-    uneven_numbers = []
+def get_odd_numbers_list_from_range(start: int, end: int) -> List[int]:
+    odd_numbers = []
 
-    # If the start isn't uneven, we add 1 to make it uneven
+    # If the start isn't odd, we add 1 to make it odd
     start = start if start % 2 != 0 else start + 1
 
     for number in range(start, end + 1, 2):
-        uneven_numbers.append(number)
-    return uneven_numbers
+        odd_numbers.append(number)
+    return odd_numbers
 
 """
     Returns a bingo board with randomized numbers for the specified team.
@@ -49,9 +47,9 @@ def get_randomized_bingo_board_for_team(team_ID: int) -> List[List[int]]:
     # If the ID of the team is even, we use even numbers for the bingo board.
     # Otherwise, we use uneven numbers.
     if team_ID % 2 == 0:
-        available_numbers = get_even_numbers_list(start, end)
+        available_numbers = get_even_numbers_list_from_range(start, end)
     else:
-        available_numbers = get_uneven_numbers_list(start, end)
+        available_numbers = get_odd_numbers_list_from_range(start, end)
 
     # Create the bingo board with randomized numbers.
     bingo_board = []
