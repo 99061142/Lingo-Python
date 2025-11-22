@@ -1,7 +1,8 @@
+from .bingo.bingo_utils import has_team_won_bingo_game
 from .lingo_utils import print_message, set_winning_team, initialize_teams_data
 from .lingo_settings.lingo_settings_utils import get_amount_of_teams, get_starting_team_ID
 from .wordle.wordle import play_wordle_round_for_team
-from .wordle.wordle_utils import any_team_has_won_or_lost_the_wordle_game, has_team_guessed_word_correctly_in_current_round
+from .wordle.wordle_utils import has_team_guessed_word_correctly_in_current_round, has_team_won_wordle_game
 from .bingo.bingo import play_bingo_round_for_team
 
 """
@@ -13,13 +14,21 @@ def start_game() -> None:
     
     current_team_ID = get_starting_team_ID()
     teams_amount = get_amount_of_teams()
-
-    while not any_team_has_won_or_lost_the_wordle_game():
+    
+    while True:
         play_wordle_round_for_team(current_team_ID)
+
+        # If the current team has won the Wordle game, we break out of the loop early
+        if has_team_won_wordle_game(current_team_ID):
+            break
 
         # If the current team has won the Wordle game, we break out of the loop early
         if has_team_guessed_word_correctly_in_current_round(current_team_ID):
             play_bingo_round_for_team(current_team_ID)
+
+            # If the user has won the Bingo game, we break out of the loop early
+            if has_team_won_bingo_game(current_team_ID):
+                break
 
         # Move to the next team, or back to the first team if all teams have played
         current_team_ID = (current_team_ID + 1) % teams_amount
@@ -45,7 +54,7 @@ def ask_to_play_again() -> None:
     }
     
     while True:
-        user_input = input("Do you want to play again? (yes/no): ").strip().lower()
+        user_input = input("Do you want to play another game of Lingo? (yes/no): ").strip().lower()
         
         # If the user wants to play again we restart the game
         if user_input in valid_options['yes']:
