@@ -269,7 +269,6 @@ def test_whether_team_has_won_bingo_game():
     )
 test_whether_team_has_won_bingo_game()
 
-
 """
     Test whether the function which returns if the team lost the bingo game works correctly.
 """
@@ -301,6 +300,7 @@ def test_whether_team_has_lost_bingo_game():
         result,
     )
 test_whether_team_has_lost_bingo_game()
+
 
 # Run the report when this file is executed directly instead of within the tests.py file
 if __name__ == "__main__":
