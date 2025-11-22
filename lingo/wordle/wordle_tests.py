@@ -55,7 +55,7 @@ def test_whether_team_has_guessed_word_in_round():
     expected = True
     result = has_team_guessed_word_correctly_in_current_round(team_ID)
     test(
-        "If the team has guessd the correct word in the current round, the function should return True.",
+        "If the team has guessed the correct word in the current round, the function should return True.",
         expected,
         result,
     )
