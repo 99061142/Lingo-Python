@@ -1,11 +1,11 @@
 import sys
 import os
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from test_lib import report, test
 from lingo.lingo_settings.lingo_settings_utils import get_starting_team_ID
 from lingo.bingo.bingo_utils import get_randomized_bingo_board_for_team
 from lingo.bingo.bingo_settings.bingo_settings_utils import get_bingo_board_size
-from test_lib import report, test
 
 """
     Test whether the bingo board size constant is set to 5.
@@ -48,5 +48,6 @@ def test_whether_bingo_board_is_correct_size():
 test_whether_bingo_board_is_correct_size()
 
 
+# Run the report when this file is executed directly instead of within the tests.py file
 if __name__ == "__main__":
     report()

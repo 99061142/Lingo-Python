@@ -1,8 +1,9 @@
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from lingo.wordle.wordle_utils import get_random_word
+
 from test_lib import report, test
+from lingo.wordle.wordle_utils import get_random_word
 
 """
     Test whether the function which would return a random word raises an exception when all available words have been used.
