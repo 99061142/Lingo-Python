@@ -1,4 +1,4 @@
-from test_lib import test
+from test_lib import test, report
 from .lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .teams_data import teams_data
 from .lingo_utils import initialize_teams_data, remove_teams_data, remove_teams_data, set_winning_team
@@ -69,3 +69,8 @@ def test_setting_winning_team():
         result,
     )
 test_setting_winning_team()
+
+
+# Run the report when this file is executed directly instead of within the tests.py file
+if __name__ == "__main__":
+    report()
