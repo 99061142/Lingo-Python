@@ -1,4 +1,4 @@
-from lingo.bingo.bingo_utils import has_team_lost_bingo_game, has_team_won_bingo_game
+from lingo.bingo.bingo_utils import has_team_lost_bingo_game
 from .lingo_utils import get_next_team_ID, print_message, set_winning_team, initialize_teams_data, has_team_won_wordle_game
 from .lingo_settings.lingo_settings_utils import get_starting_team_ID
 from .wordle.wordle import play_wordle_round_for_team
