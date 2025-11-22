@@ -61,7 +61,13 @@ def play_bingo_round_for_team(team_ID: int) -> None:
         
         print_bingo_board_for_team(team_ID)
 
-        # If the player has won the bingo game, we return early.
+        # If the player has won the bingo game, we print the win message and return early
         if has_team_won_bingo_game(team_ID):
-            print_message(f"Team {team_ID + 1} has completed a line on their bingo board and wins the bingo game!")
+            if grabbed_ball == "green":
+                win_message = f"Team {team_ID + 1} has grabbed 3 green balls and wins the bingo game!"
+            else:
+                win_message = f"Team {team_ID + 1} has completed a line on their bingo board and wins the bingo game!"
+
+            print_color = "green"
+            print_message(win_message, print_color)
             return

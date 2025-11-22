@@ -291,6 +291,20 @@ def get_available_bingo_board_pit_balls_for_team(team_ID: int) -> List:
     return bingo_board_pit_balls
 
 """
+    Returns whether the specified team has won or lost the bingo game.
+"""
+def has_team_won_or_lost_bingo_game(team_ID: int) -> bool:
+    has_won_bingo_game = has_team_won_bingo_game(team_ID)
+    if has_won_bingo_game:
+        return True
+
+    has_lost_bingo_game = has_team_lost_bingo_game(team_ID)
+    if has_lost_bingo_game:
+        return True
+
+    return False
+
+"""
     Returns whether the specified team has won the bingo game.
 """            
 def has_team_won_bingo_game(team_ID: int) -> bool:

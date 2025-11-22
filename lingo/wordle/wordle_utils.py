@@ -232,6 +232,20 @@ def any_team_has_won_or_lost_the_wordle_game() -> bool:
     return False
 
 """
+    Return whether the specified team has won or lost the Wordle game.
+"""
+def has_team_won_or_lost_wordle_game(team_ID: int) -> bool:
+    team_has_lost = has_team_lost_wordle_game(team_ID)
+    if team_has_lost:
+        return True
+
+    team_has_won = has_team_won_wordle_game(team_ID)
+    if team_has_won:
+        return True
+
+    return False
+
+"""
     Return whether the specified team has won the Wordle game.
 """
 def has_team_won_wordle_game(team_ID: int) -> bool:
