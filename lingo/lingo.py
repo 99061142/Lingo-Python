@@ -1,4 +1,4 @@
-from lingo.bingo.bingo_utils import has_team_lost_bingo_game
+from lingo.bingo.bingo_utils import has_team_lost_bingo_game, has_team_won_bingo_game
 from .lingo_utils import get_next_team_ID, print_message, set_winning_team, initialize_teams_data, has_team_won_wordle_game
 from .lingo_settings.lingo_settings_utils import get_starting_team_ID
 from .wordle.wordle import play_wordle_round_for_team
@@ -35,8 +35,12 @@ def start_game() -> None:
             # After that, we break out of the loop early
             if has_team_lost_bingo_game(current_team_ID):
                 current_team_ID = get_next_team_ID(current_team_ID)
-            set_winning_team(current_team_ID)
-            break
+                set_winning_team(current_team_ID)
+                break
+
+            if has_team_won_bingo_game(current_team_ID):
+                set_winning_team(current_team_ID)
+                break
 
         current_team_ID = get_next_team_ID(current_team_ID)
 
