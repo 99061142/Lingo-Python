@@ -5,6 +5,16 @@ from .wordle.wordle import play_wordle_round_for_team
 from .wordle.wordle_utils import has_team_guessed_word_correctly_in_current_round, has_team_lost_wordle_game
 from .bingo.bingo import play_bingo_round_for_team
 
+def print_winning_team_message(team_ID: int) -> None:
+    message = f"Team {team_ID + 1} wins the game of Lingo!"
+    message_color = "green"
+    print_message(message, message_color)
+
+def print_losing_team_message(team_ID: int) -> None:
+    message = f"Team {team_ID + 1} has lost the game of Lingo."
+    message_color = "red"
+    print_message(message, message_color)
+
 """
     Starts the game by initializing teams data and managing the game loop.
 """
@@ -20,12 +30,14 @@ def start_game() -> None:
         # If the team has won the Wordle game, we set them as the winning team and break out of the loop early
         if has_team_won_wordle_game(current_team_ID):
             set_winning_team(current_team_ID)
+            print_winning_team_message(current_team_ID)
             break
 
         # If the current team has lost the Wordle game, we set the next team as the winning team and break out of the loop early
         if has_team_lost_wordle_game(current_team_ID):
             current_team_ID = get_next_team_ID(current_team_ID)
             set_winning_team(current_team_ID)
+            print_losing_team_message(current_team_ID)
             break
 
         if has_team_guessed_word_correctly_in_current_round(current_team_ID):
@@ -36,10 +48,12 @@ def start_game() -> None:
             if has_team_lost_bingo_game(current_team_ID):
                 current_team_ID = get_next_team_ID(current_team_ID)
                 set_winning_team(current_team_ID)
+                print_losing_team_message(current_team_ID)
                 break
 
             if has_team_won_bingo_game(current_team_ID):
                 set_winning_team(current_team_ID)
+                print_winning_team_message(current_team_ID)
                 break
 
         current_team_ID = get_next_team_ID(current_team_ID)
