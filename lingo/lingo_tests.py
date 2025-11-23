@@ -1,7 +1,7 @@
 from test_lib import test, report
 from .lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .teams_data import teams_data
-from .lingo_utils import initialize_teams_data, remove_teams_data, remove_teams_data, set_winning_team
+from .lingo_utils import get_next_team_ID, initialize_teams_data, remove_teams_data, remove_teams_data, set_winning_team
 
 # Run all lingo-related tests
 import lingo.bingo.bingo_tests
@@ -69,6 +69,23 @@ def test_setting_winning_team():
         result,
     )
 test_setting_winning_team()
+
+"""
+    Test whether we go to the next team, it correctly gets the next team ID in a circular manner.
+"""
+def test_getting_next_team_ID_circularly():
+    total_teams = get_amount_of_teams()
+
+    for team_ID in range(total_teams):
+        expected_next_team_ID = (team_ID + 1) % total_teams
+        result_next_team_ID = get_next_team_ID(team_ID)
+
+        test(
+            f"When getting the next team ID for team {team_ID}, it should return team {expected_next_team_ID}. (based on the maximum amount of teams: {total_teams})",
+            expected_next_team_ID,
+            result_next_team_ID,
+        )
+test_getting_next_team_ID_circularly()
 
 
 # Run the report when this file is executed directly instead of within the tests.py file
