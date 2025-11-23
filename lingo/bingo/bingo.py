@@ -61,7 +61,9 @@ def play_bingo_round_for_team(team_ID: int) -> None:
             print_message(fail_message, print_color)
             break
         
-        print_bingo_board_for_team(team_ID)
+        # If the grabbed ball is a number, we print the updated bingo board for the team
+        if type(grabbed_ball) is int:
+            print_bingo_board_for_team(team_ID)
 
         # If the player has won the bingo game, we print the win message and return early
         if has_team_won_bingo_game(team_ID):
