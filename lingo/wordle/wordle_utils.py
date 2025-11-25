@@ -6,16 +6,9 @@ from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
 from ..lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts, get_empty_column_placeholder_for_wordle_board, get_available_letter_position_colors
 
-
-# Global set to keep track of used wordle words.
-# This will be used to avoid repeating words within the rounds of the wordle game
-_used_wordle_words = set()
-
-
 ###
 ### GETTERS
 ###
-
 
 """
     Return whether the team has guessed the word correctly in the current round.
@@ -180,10 +173,29 @@ def get_current_wordle_round_guesses_by_team(team_ID: int) -> int:
     return guesses
 
 """
+    Return a set of all used Wordle words across all teams and rounds.
+"""
+def get_used_wordle_words() -> set:
+    used_wordle_words = set()
+    
+    if len(teams_data) == 0:
+        return used_wordle_words
+
+    for team_ID in range(get_amount_of_teams()):
+        teamData = teams_data[team_ID]
+        roundsInfo = teamData["roundsInfo"]
+        for round_info in roundsInfo:
+            word_to_guess = round_info["wordToGuess"]
+            used_wordle_words.add(word_to_guess)
+    return used_wordle_words
+
+"""
     Return a random word within the available words we can use for the Wordle game.
     If all words have been used, we raise an exception.
 """
-def get_random_word(words: list = five_letter_words.words, used_wordle_words: set = _used_wordle_words) -> str:
+def get_random_word(words: list = five_letter_words.words) -> str:
+    used_wordle_words = get_used_wordle_words()
+
     # If all words have been used, we raise an exception
     if len(used_wordle_words) >= len(words):
         raise Exception("All available Wordle words have been used.")
@@ -191,7 +203,6 @@ def get_random_word(words: list = five_letter_words.words, used_wordle_words: se
     while True:
         word = choice(words)
         if word not in used_wordle_words:
-            used_wordle_words.add(word)
             return word
 
 """

@@ -1,32 +1,40 @@
 import sys
 import os
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from lingo.wordle.wordle_settings.wordle_settings_utils import get_empty_column_placeholder_for_wordle_board, get_max_wordle_guess_attempts
 from lingo.lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
 from lingo.teams_data import teams_data
-from lingo.lingo_settings.lingo_settings_utils import get_starting_team_ID
-from lingo.lingo_utils import initialize_teams_data
+from lingo.lingo_settings.lingo_settings_utils import get_starting_team_ID, get_amount_of_teams
+from lingo.lingo_utils import initialize_teams_data, remove_teams_data
 from test_lib import report, test
 from lingo.wordle.wordle_utils import add_guess_to_current_round_for_team, add_single_initial_rounds_info_for_team, get_current_wordle_round_board_width_for_team, get_current_wordle_round_word_to_guess_for_team, get_guess_letters_color_based_on_word_to_guess, get_random_word, has_team_guessed_word_correctly_in_current_round, has_team_lost_wordle_game, has_team_won_wordle_game, is_valid_wordle_guess
 
 """
     Test whether the function which would return a random word raises an exception when all available words have been used.
 """
-def test_random_word_error_handling():
+async def test_random_word_error_handling():
+    # Initialize the teams data to ensure we have a filled Wordle round with the used words set
+    initialize_teams_data()
+
+    # Add a single Wordle round for the starting team and simulate that they have used the only word available
+    team_ID = get_starting_team_ID()
+    add_single_initial_rounds_info_for_team(team_ID)
+    word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
+    add_guess_to_current_round_for_team(team_ID, word_to_guess, 0)
+
     words = [
-        "test_word"
+        word_to_guess
     ]
-    used_words = set()
 
+    # Simulate using all words
     for _ in range(len(words)):
-        get_random_word(words, used_words)
+        get_random_word(words)
 
-
+    # Test whether getting a random word now raises an exception
     throws_exception = False
     try:
-        get_random_word(words, used_words)
+        get_random_word(words)
     except Exception:
         throws_exception = True
 
@@ -36,6 +44,10 @@ def test_random_word_error_handling():
         expected,
         throws_exception,
     )
+
+    # Reset the teams data after the test.
+    # This is done to let the other tests run without issues.
+    await remove_teams_data()
 test_random_word_error_handling()
 
 """
