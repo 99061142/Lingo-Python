@@ -52,7 +52,6 @@ def play_wordle_round_for_team(team_ID: int) -> None:
 
             return
     
-    print(amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID))
     # If the team has lost 3 Wordle rounds in a row, they lose the Wordle game
     if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= 3:
         fail_message = f"Team {team_ID + 1} has lost 3 Wordle rounds in a row and loses the Wordle game!"
