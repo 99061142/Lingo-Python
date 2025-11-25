@@ -43,8 +43,26 @@ def play_wordle_round_for_team(team_ID: int) -> None:
             win_message = f"Team {team_ID + 1} guessed the word '{word_to_guess}' correctly!"
             print_color = "green"
             print_message(win_message, print_color)
+            
+            # If the team has won 10 Wordle rounds, they win the Wordle game
+            if amount_of_wordle_rounds_won_by_team(team_ID) >= 10:
+                win_message = f"Team {team_ID + 1} has won 10 Wordle rounds and wins the Wordle game!"
+                print_color = "green"
+                print_message(win_message, print_color)
+
             return
-        
+    
+    print(amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID))
+    # If the team has lost 3 Wordle rounds in a row, they lose the Wordle game
+    if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= 3:
+        fail_message = f"Team {team_ID + 1} has lost 3 Wordle rounds in a row and loses the Wordle game!"
+        print_color = "red"
+        print_message(fail_message, print_color)
+        return
+    
+    # If the team has used all their attempts without guessing the word, 
+    # but hasn't lost 3 rounds in a row yet, 
+    # we just print the fail message for this round
     fail_message = f"Team {team_ID + 1} failed to guess the word within the maximum attempts. The correct word was '{word_to_guess}'."
     print_color = "red"
     print_message(fail_message, print_color)
