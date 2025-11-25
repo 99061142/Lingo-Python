@@ -1,8 +1,7 @@
 from termcolor import colored
 from .lingo_settings.lingo_settings_utils import get_amount_of_teams
-from .wordle.wordle_utils import has_team_lost_wordle_game, has_team_won_wordle_game
 from .teams_data import teams_data
-from .bingo.bingo_utils import get_randomized_bingo_board_for_team, has_team_lost_bingo_game, has_team_won_bingo_game
+from .bingo.bingo_utils import get_randomized_bingo_board_for_team
 
 
 ###
@@ -43,34 +42,21 @@ def get_initial_team_data_for_team(team_ID: int) -> dict:
     return initial_team_data
 
 """
-    Returns whether the team has won the game based on the winning conditions.
+    Returns whether any team has won the Lingo game.
 """
-def has_team_won(team_ID: int) -> bool:
-    won_bingo_game = has_team_won_bingo_game(team_ID)
-    if won_bingo_game:
-        return True
-    
-    won_wordle_game = has_team_won_wordle_game(team_ID)
-    if won_wordle_game:
-        return True
-    
+def has_any_team_won_lingo_game() -> bool:
+    for team_ID in range(get_amount_of_teams()):
+        if has_team_won_lingo_game(team_ID):
+            return True
     return False
 
 """
-    Returns whether the team has lost the game based on the losing conditions.
+    Returns whether the team has won the Lingo game.
 """
-def has_team_lost(team_ID: int) -> bool:
-    # If the team has lost the bingo game
-    lost_bingo_game = has_team_lost_bingo_game(team_ID)
-    if lost_bingo_game:
-        return True
-    
-    lost_wordle_game = has_team_lost_wordle_game(team_ID)
-    if lost_wordle_game:
-        return True
-    
-    return False
-
+def has_team_won_lingo_game(team_ID: int) -> bool:
+    team_data = teams_data[team_ID]
+    has_won = team_data["hasWon"]
+    return has_won
 
 ### 
 ### SETTERS

@@ -1,5 +1,5 @@
 from ..wordle.wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts
-from ..lingo_utils import print_message
+from ..lingo_utils import get_next_team_ID, print_message, set_winning_team
 from .wordle_utils import *
 
 """
@@ -44,19 +44,24 @@ def play_wordle_round_for_team(team_ID: int) -> None:
             print_color = "green"
             print_message(win_message, print_color)
             
-            # If the team has won 10 Wordle rounds, they win the Wordle game
+            # If the team has won 10 Wordle rounds, we print the win message and set the current team as the winning team
             if amount_of_wordle_rounds_won_by_team(team_ID) >= 10:
                 win_message = f"Team {team_ID + 1} has won 10 Wordle rounds and wins the Wordle game!"
                 print_color = "green"
                 print_message(win_message, print_color)
 
+                set_winning_team(team_ID)
+
             return
     
-    # If the team has lost 3 Wordle rounds in a row, they lose the Wordle game
+    # If the team has lost 3 Wordle rounds in a row, we print the fail message, set the next team as the winning team, and return
     if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= 3:
         fail_message = f"Team {team_ID + 1} has lost 3 Wordle rounds in a row and loses the Wordle game!"
         print_color = "red"
         print_message(fail_message, print_color)
+
+        next_team_ID = get_next_team_ID(team_ID)
+        set_winning_team(next_team_ID)
         return
     
     # If the team has used all their attempts without guessing the word, 

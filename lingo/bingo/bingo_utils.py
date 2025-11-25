@@ -291,20 +291,6 @@ def get_available_bingo_board_pit_balls_for_team(team_ID: int) -> List:
     return bingo_board_pit_balls
 
 """
-    Returns whether the specified team has won or lost the bingo game.
-"""
-def has_team_won_or_lost_bingo_game(team_ID: int) -> bool:
-    has_won_bingo_game = has_team_won_bingo_game(team_ID)
-    if has_won_bingo_game:
-        return True
-
-    has_lost_bingo_game = has_team_lost_bingo_game(team_ID)
-    if has_lost_bingo_game:
-        return True
-
-    return False
-
-"""
     Returns whether the specified team has won the bingo game.
 """            
 def has_team_won_bingo_game(team_ID: int) -> bool:
@@ -316,17 +302,6 @@ def has_team_won_bingo_game(team_ID: int) -> bool:
     # If the team has any line on their bingo board, they win the game.
     has_any_filled_lines_on_bingo_board = bingo_board_has_filled_line_for_team(team_ID)
     if has_any_filled_lines_on_bingo_board:
-        return True
-    
-    return False
-
-"""
-    Returns whether the specified team has lost the bingo game.
-"""            
-def has_team_lost_bingo_game(team_ID: int) -> bool:
-    # If the team has grabbed 3 or more red balls, they lose the bingo game.
-    red_balls_grabbed = get_amount_of_color_balls_grabbed_by_team(team_ID, "red")
-    if red_balls_grabbed >= 3:
         return True
     
     return False

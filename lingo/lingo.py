@@ -1,8 +1,7 @@
-from lingo.bingo.bingo_utils import has_team_lost_bingo_game, has_team_won_bingo_game
-from .lingo_utils import get_next_team_ID, print_message, set_winning_team, initialize_teams_data, has_team_won_wordle_game
+from .lingo_utils import get_next_team_ID, has_any_team_won_lingo_game, print_message, has_team_won_lingo_game, initialize_teams_data
 from .lingo_settings.lingo_settings_utils import get_starting_team_ID
 from .wordle.wordle import play_wordle_round_for_team
-from .wordle.wordle_utils import has_team_guessed_word_correctly_in_current_round, has_team_lost_wordle_game
+from .wordle.wordle_utils import has_team_guessed_word_correctly_in_current_round
 from .bingo.bingo import play_bingo_round_for_team
 
 def print_winning_team_message(team_ID: int) -> None:
@@ -27,36 +26,25 @@ def start_game() -> None:
     while True:
         play_wordle_round_for_team(current_team_ID)
 
-        # If the team has won the Wordle game, we set them as the winning team and break out of the loop early
-        if has_team_won_wordle_game(current_team_ID):
-            set_winning_team(current_team_ID)
-            print_winning_team_message(current_team_ID)
+        # If any team has won, it means the current team lost or won the Wordle game, so we break out of the loop early
+        if has_any_team_won_lingo_game():
             break
 
-        # If the current team has lost the Wordle game, we set the next team as the winning team and break out of the loop early
-        if has_team_lost_wordle_game(current_team_ID):
-            current_team_ID = get_next_team_ID(current_team_ID)
-            set_winning_team(current_team_ID)
-            print_losing_team_message(current_team_ID)
-            break
-
+        # If the current team has guessed the word correctly in the Wordle round, they get to play a Bingo round
         if has_team_guessed_word_correctly_in_current_round(current_team_ID):
             play_bingo_round_for_team(current_team_ID)
 
-            # If the team has lost the Bingo game, we set the next team as the winning team, else we set the current team as the winning team.
-            # After that, we break out of the loop early
-            if has_team_lost_bingo_game(current_team_ID):
-                current_team_ID = get_next_team_ID(current_team_ID)
-                set_winning_team(current_team_ID)
-                print_losing_team_message(current_team_ID)
+            # If any team has won, it means the current team lost or won the Bingo game, so we break out of the loop early
+            if has_any_team_won_lingo_game():
                 break
-
-            if has_team_won_bingo_game(current_team_ID):
-                set_winning_team(current_team_ID)
-                print_winning_team_message(current_team_ID)
-                break
-
+        
+        # Move to the next team for the next iteration
         current_team_ID = get_next_team_ID(current_team_ID)
+    
+    if has_team_won_lingo_game(current_team_ID):
+        print_winning_team_message(current_team_ID)
+    else:
+        print_losing_team_message(current_team_ID)
 
     ask_to_play_again()
 

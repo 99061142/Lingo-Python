@@ -1,4 +1,4 @@
-from ..lingo_utils import print_message
+from ..lingo_utils import print_message, set_winning_team, get_next_team_ID
 from .bingo_utils import *
 from time import sleep
 from typing import Union
@@ -54,11 +54,13 @@ def play_bingo_round_for_team(team_ID: int) -> None:
         
         grabbed_ball = grab_bingo_ball_for_team(team_ID)
     
-        # If the team has grabbed 3 red balls, they lose the bingo game
+        # If the team has grabbed 3 red balls, we print the fail message, set the current winning team ID, and return
         if get_amount_of_color_balls_grabbed_by_team(team_ID, "red") >= 3:
             fail_message = f"Team {team_ID + 1} has grabbed 3 red balls and loses the bingo game!"
             print_color = "red"
             print_message(fail_message, print_color)
+
+            set_winning_team(team_ID)
             return
 
         # If the grabbed ball is red, and it's not the last attempt, end the bingo turn early
@@ -72,7 +74,7 @@ def play_bingo_round_for_team(team_ID: int) -> None:
         if type(grabbed_ball) is int:
             print_bingo_board_for_team(team_ID)
 
-        # If the player has won the bingo game, we print the win message and return early
+        # If the player has won the bingo game, we print the win message, set the next team as the winning team, and return
         if has_team_won_bingo_game(team_ID):
             if grabbed_ball == "green":
                 win_message = f"Team {team_ID + 1} has grabbed 3 green balls and wins the bingo game!"
@@ -81,4 +83,7 @@ def play_bingo_round_for_team(team_ID: int) -> None:
 
             print_color = "green"
             print_message(win_message, print_color)
+
+            next_team_ID = get_next_team_ID(team_ID)
+            set_winning_team(next_team_ID)
             return
