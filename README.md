@@ -1,8 +1,8 @@
 # Lingo
 This is my end project assignment for year 1 of my college course in Software Developer.
 
-## Why didn't I make use of classes, or any other 'non-basic' code?
-Because of the rule that I can only make use of whatever we have learned within Python in our first year, I can't use classes. This is because we have only learned up to the use of functions/lambda's.
+## Why didn't I make use of classes?
+Because of the rule that I can only make use of whatever the class did learn within Python in our first year, I can't use classes. Even if I understand classes, it still isn't allowed. This is because the class have only learned up to the use of functions/lambda's.
 
 ## Win conditions (One or more of the following options:)
 * The team has grabbed 3 green balls within the Bingo ball pit.
