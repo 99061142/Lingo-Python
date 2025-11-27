@@ -72,13 +72,6 @@ def get_current_wordle_round_board_for_team(team_ID: int) -> list:
     guesses_amount = len(wordle_round_guesses)
     letter_placeholder = get_empty_column_placeholder_for_wordle_board()
 
-    # If the length of the guesses we have made is equal to the maximum attempts + 1,
-    # it means that we added an extra row for displaying correct letters in their correct positions.
-    # We remove that extra row since the user can only make the maximum attempts number of guesses.
-    if guesses_amount == get_max_wordle_guess_attempts() + 1:
-        guesses_amount -= 1
-        wordle_round_guesses = wordle_round_guesses[:-1]
-
     # Add each guess made so far to the board
     if guesses_amount:
         for guess in wordle_round_guesses:
@@ -336,6 +329,11 @@ def add_guess_to_current_round_for_team(team_ID: int, guess: str, attempt_number
     # If the word is guessed correctly, we do not need to add the letters and colors to the next attempt row
     if guess == word_to_guess:
         return
+    
+    # If this was the last attempt, we do not need to add the letters and colors to the next attempt row
+    if attempt_number == get_max_wordle_guess_attempts() - 1:
+        return
+    
 
     # Go through each letter in the guess and add the letter within the `next_attempt_row_guess` list if it's correct, else we add the placeholder letter
     # We do the same for the colors within the `next_attempt_row_colors` list. If the letter is correct, we add the correct color, else we add the default terminal color
