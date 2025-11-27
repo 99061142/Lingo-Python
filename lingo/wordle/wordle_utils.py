@@ -72,6 +72,13 @@ def get_current_wordle_round_board_for_team(team_ID: int) -> list:
     guesses_amount = len(wordle_round_guesses)
     letter_placeholder = get_empty_column_placeholder_for_wordle_board()
 
+    # If the length of the guesses we have made is equal to the maximum attempts + 1,
+    # it means that we added an extra row for displaying correct letters in their correct positions.
+    # We remove that extra row since the user can only make the maximum attempts number of guesses.
+    if guesses_amount == get_max_wordle_guess_attempts() + 1:
+        guesses_amount -= 1
+        wordle_round_guesses = wordle_round_guesses[:-1]
+
     # Add each guess made so far to the board
     if guesses_amount:
         for guess in wordle_round_guesses:

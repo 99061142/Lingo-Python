@@ -54,8 +54,10 @@ def play_wordle_round_for_team(team_ID: int) -> None:
 
             return
     
-    # If the team has lost 3 Wordle rounds in a row, we print the fail message, set the next team as the winning team, and return
+    # If the team has lost 3 Wordle rounds in a row, we print the the end Wordle board, fail message, set the next team as the winning team, and return
     if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= 3:
+        print_wordle_board_for_team(team_ID)
+
         fail_message = f"Team {team_ID + 1} has lost 3 Wordle rounds in a row and loses the Wordle game!"
         print_color = "red"
         print_message(fail_message, print_color)
@@ -63,7 +65,10 @@ def play_wordle_round_for_team(team_ID: int) -> None:
         next_team_ID = get_next_team_ID(team_ID)
         set_winning_team(next_team_ID)
         return
-    
+
+    # Print the final Wordle board for the team after they have used all their attempts
+    print_wordle_board_for_team(team_ID)
+
     # If the team has used all their attempts without guessing the word, 
     # but hasn't lost 3 rounds in a row yet, 
     # we just print the fail message for this round
