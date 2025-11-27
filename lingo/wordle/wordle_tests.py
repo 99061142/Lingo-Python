@@ -146,9 +146,9 @@ def test_team_win_detection_in_wordle():
 test_team_win_detection_in_wordle()
 
 """
-    Test whether the function which returns if the team has not yet won the Wordle game works correctly.
+    Test whether the function which returns if the team has lost the Wordle game works correctly.
 """
-def test_team_not_yet_won_detection_in_wordle():
+def test_team_lost_wordle_game():
     # First we initialize the teams data to ensure we have the global dictionary to work with
     initialize_teams_data()
         
@@ -168,7 +168,7 @@ def test_team_not_yet_won_detection_in_wordle():
         expected,
         result,
     )
-test_team_not_yet_won_detection_in_wordle()
+test_team_lost_wordle_game()
 
 """
     Test whether the function which validate the team's guess works correctly.
