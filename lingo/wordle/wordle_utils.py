@@ -201,19 +201,13 @@ def get_guess_letters_color_based_on_word_to_guess(guess: str, word_to_guess: st
     
     return guess_colors
 
-
-
-
-
-
-
-
-"""
-    Return the current round's Wordle board for the specified team.
-    !Do note that this is a 2D list representing the wordle board, with placeholders for empty rows and/or letters.
-    !This is not a stringified version of the board for display purposes.
-"""
 def get_current_wordle_round_board_for_team(team_ID: int) -> list:
+    """
+        Return the current round's Wordle board for the specified team.
+        !Do note that this is a 2D list representing the wordle board, with placeholders for empty rows and/or letters.
+        !This is not a stringified version of the board for display purposes.
+    """
+
     word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
     word_to_guess_length = len(word_to_guess)
     
@@ -244,10 +238,11 @@ def get_current_wordle_round_board_for_team(team_ID: int) -> list:
 
     return wordle_board
 
-"""
-    Return a stringified version of the Wordle board for display purposes.
-"""
 def get_stringified_current_wordle_round_board_for_team(team_ID: int) -> str:
+    """
+        Return a stringified version of the Wordle board for display purposes.
+    """
+
     board_width = get_current_wordle_round_board_width_for_team(team_ID)
 
     # Add the title to show above the board
@@ -315,12 +310,13 @@ def has_team_won_or_lost_wordle_game(team_ID: int) -> bool:
 ###
 
 
-"""
-    Add the initial round info for the specified team within the global teams_data structure.
-    !Do note that we will always add the first letter of the word to guess, and its corresponding color (correct position color) as the initial guess.
-    !This is done to give the player a starting point for their guesses.
-"""
 def add_single_initial_rounds_info_for_team(team_ID: int) -> None:
+    """
+        Add the initial round info for the specified team within the global teams_data structure.
+        !Do note that we will always add the first letter of the word to guess, and its corresponding color (correct position color) as the initial guess.
+        !This is done to give the player a starting point for their guesses.
+    """
+
     wordle_guess_colors = get_available_letter_position_colors() 
     word_to_guess = get_random_word()
 
@@ -340,11 +336,12 @@ def add_single_initial_rounds_info_for_team(team_ID: int) -> None:
     }
     teamData["roundsInfo"].append(initial_rounds_info)
 
-"""
-    Add the provided guess to the current round for the specified team.
-    !Do note that this function also adds the guessesColor based on the correctness of the guess.
-"""
 def add_guess_to_current_round_for_team(team_ID: int, guess: str, attempt_number: int) -> None:
+    """
+        Add the provided guess to the current round for the specified team.
+        !Do note that this function also adds the guessesColor based on the correctness of the guess.
+    """
+
     current_wordle_round = get_current_wordle_round_for_team(team_ID)
     current_wordle_round_guesses = current_wordle_round["guesses"]
 
@@ -408,11 +405,11 @@ def add_guess_to_current_round_for_team(team_ID: int, guess: str, attempt_number
 ### VALIDATORS
 ###
 
-
-"""
-    Validate if the provided word is a valid five-letter word, and is a word which is an option for the user to guess.
-"""
 def is_valid_wordle_guess(guess: str, team_ID: int) -> dict:
+    """
+        Validate if the provided word is a valid five-letter word, and is a word which is an option for the user to guess.
+    """
+
     word_to_guess_length = len(get_current_wordle_round_word_to_guess_for_team(team_ID))
 
     if len(guess) != word_to_guess_length:
