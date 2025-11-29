@@ -1,9 +1,10 @@
 from lingo.lingo import start_game
 
-"""
-    Start the Lingo game application.
-"""
 def main() -> None:
+    """
+        Start the Lingo game application.
+    """
+
     start_game()
 
 if __name__ == "__main__":

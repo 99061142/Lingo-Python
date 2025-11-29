@@ -6,5 +6,11 @@
         "default": "white"
     },
     "max_guess_attempts": 5,
-    "empty_column_placeholder": "_"
+    "empty_column_placeholder": "_",
+    "win_conditions": {
+        "rounds_won": 10
+    },
+    "lose_conditions": {
+        "rounds_lost_in_a_row": 3
+    }
 }

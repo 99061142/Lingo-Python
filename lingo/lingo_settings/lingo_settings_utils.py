@@ -1,8 +1,10 @@
+import os
 from json import load
 
-# Load game settings from the JSON file
-with open('lingo/lingo_settings/lingo_settings.json', 'r') as settings_file:
-    game_settings = load(settings_file)
+# Let us read and use the Lingo settings
+currentDir = os.path.dirname(os.path.realpath(__file__))
+with open(os.path.join(currentDir, 'lingo_settings.json'), 'r') as lingo_settings_file:
+    lingo_settings = load(lingo_settings_file)
 
 
 ###
@@ -10,16 +12,18 @@ with open('lingo/lingo_settings/lingo_settings.json', 'r') as settings_file:
 ###
 
 
-"""
-    Returns the amount of teams playing the game.
-"""
 def get_amount_of_teams() -> int:
-    amount_of_teams = game_settings.get("teams_amount", 1)
+    """
+        Returns the amount of teams playing the game.
+    """
+
+    amount_of_teams = lingo_settings['teams_amount']
     return amount_of_teams
 
-"""
-    Returns the starting team ID.
-"""
 def get_starting_team_ID() -> int:
-    starting_team_ID = game_settings.get("starting_team_ID", 0)
+    """
+        Returns the starting team ID.
+    """
+
+    starting_team_ID = lingo_settings['starting_team_ID']
     return starting_team_ID

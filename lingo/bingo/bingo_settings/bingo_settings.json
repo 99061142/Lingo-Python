@@ -1,7 +1,15 @@
 {
     "board_size": 4,
-    "number_color": {
+    "number_colors": {
         "marked": "green",
         "unmarked": "white"
+    },
+    "maximum_grabs_per_round": 2,
+    "lose_conditions": {
+        "red_balls_grabbed": 3
+    },
+    "win_conditions": {
+        "lines_needed": 1,
+        "green_balls_grabbed": 3
     }
 }
