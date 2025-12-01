@@ -5,6 +5,7 @@ def main() -> None:
     """
         Start the Lingo game application.
     """
+
     want_to_keep_playing = True
     while want_to_keep_playing:
         start_game()
