@@ -59,41 +59,27 @@ def start_game() -> None:
     else:
         print_losing_team_message(current_team_ID)
 
-    # Ask both teams if they want to play the Lingo game again
-    ask_to_play_again()
-
-def restart_game() -> None:
-    """
-        Restart the Lingo game.
-    """
-
-    start_game()
-
-def ask_to_play_again() -> None:
+def ask_to_play_again() -> bool:
     """
         Ask both teams if they want to play another game of Lingo.
+        We return True if both teams want to play again, and False otherwise.
     """
 
-    # Valid user input options
-    valid_options = {
-        'yes': ['yes', 'y'],
-        'no': ['no', 'n']
+    ask_to_play_again_options = {
+        'yes': set(['yes', 'y']),
+        'no': set(['no', 'n'])
     }
-    
+
     while True:
         user_input = input("Do you want to play another game of Lingo? (yes/no): ").strip().lower()
         
-        # If both teams want to play again we restart the Lingo game
-        if user_input in valid_options['yes']:
-            restart_game()
-            return
+        if user_input in ask_to_play_again_options['yes']:
+            return True
         
-        # If both teams do not want to play another game of Lingo, we thank them for playing, and exit the application
-        if user_input in valid_options['no']:
-            print_message("Thanks for playing the game!")
-            exit(0)
+        if user_input in ask_to_play_again_options['no']:
+            return False
         
         # If both teams provided an answer that is not valid, we print an error message and ask them the question again
-        message = f"Invalid input. Please enter one of the following options: {', '.join(valid_options.keys())}."
+        message = f"Invalid input. Please enter one of the following options: {', '.join(ask_to_play_again_options.keys())}."
         message_color = "red"
         print_message(message, message_color)
