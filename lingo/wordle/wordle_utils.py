@@ -184,22 +184,27 @@ def get_guess_letters_color_based_on_word_to_guess(guess: str, word_to_guess: st
     
     wordle_guess_colors = get_available_letter_position_colors()
     
-    # Create and return the list of colors for each letter in the guess.
-    #! Do note that we use the letters within the word to guess as placeholders initially
-    guess_colors = []
+    guess_colors = [None] * len(guess)
     word_to_guess_letters = list(word_to_guess)
+    
+    # First handle the correct positioned letters
     for index, letter in enumerate(guess):
-        word_to_guess_letter = word_to_guess_letters[index]
-        word_to_guess_letters[index] = ""
-        if letter == word_to_guess_letter:
-            guess_colors.append(wordle_guess_colors["correct"])
+        if letter == word_to_guess_letters[index]:
+            guess_colors[index] = wordle_guess_colors["correct"]
+            word_to_guess_letters[index] = ""
+    
+    # After we handle the correct positioned letters, we handle the misplaced and incorrect letters
+    for index, letter in enumerate(guess):
+        if guess_colors[index] is not None:
+            continue
+        
+        if letter in word_to_guess_letters:
+            guess_colors[index] = wordle_guess_colors["misplaced"]
+            first_occurrence_index = word_to_guess_letters.index(letter)
+            word_to_guess_letters[first_occurrence_index] = ""
             continue
 
-        if letter in word_to_guess_letter:
-            guess_colors.append(wordle_guess_colors["misplaced"])
-            continue
-
-        guess_colors.append(wordle_guess_colors["incorrect"])
+        guess_colors[index] = wordle_guess_colors["incorrect"]
     
     return guess_colors
 
