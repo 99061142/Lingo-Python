@@ -1,7 +1,7 @@
 from test_lib import report
 
 #! DO NOT DELETE THIS IMPORT, EVEN IF PYLANCE SAYS IT IS UNUSED.
-#! This import runs all the tests for this application
+#! This import runs all the tests for the Lingo utility functions. Do note that this doesn't include the Wordle or Bingo utility functions
 import lingo.lingo_tests
 
 #! DO NOT DELETE THIS IMPORT, EVEN IF PYLANCE SAYS IT IS UNUSED.
