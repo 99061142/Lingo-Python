@@ -495,10 +495,28 @@ def test_get_guess_letters_color_based_on_word_to_guess() -> None:
     ]
     result = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
     test(
-        f"The colors returned should be green, yellow, and red for correct, misplaced, and incorrect letters respectively.",
+        f"The colors returned should be green, yellow, and red for correct, misplaced, and incorrect letters respectively. for the word 'crane' and guess 'cater'",
         expected_colors,
         result,
     )
+
+    word_to_guess = "magen"
+    guess = "meren"
+    expected_colors = [
+        wordle_letter_colors["correct"],
+        wordle_letter_colors["incorrect"],
+        wordle_letter_colors["incorrect"],
+        wordle_letter_colors["correct"],
+        wordle_letter_colors["correct"]
+    ]
+    result = get_guess_letters_color_based_on_word_to_guess(guess, word_to_guess)
+    test(
+        f"The colors returned should be green, yellow, and red for correct, misplaced, and incorrect letters respectively. for the word 'magen' and guess 'meren'",
+        expected_colors,
+        result,
+    )
+
+
 test_get_guess_letters_color_based_on_word_to_guess()
 
 def test_get_current_wordle_round_board_for_team() -> None:
