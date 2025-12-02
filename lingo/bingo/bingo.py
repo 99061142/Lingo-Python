@@ -40,9 +40,10 @@ def grab_bingo_ball_for_team(team_ID: int) -> Union[str, int]:
     mark_number_on_bingo_board_for_team(team_ID, grabbed_ball)
     return grabbed_ball
 
-def play_bingo_round_for_team(team_ID: int) -> None:
+def play_bingo_round_for_team(team_ID: int) -> bool:
     """
         Play a Bingo round for the specified team.
+        We return a boolean which indicates if the team has won or lost the Bingo game.
     """
     
     max_grab_attempts = get_maximum_grabs_per_round()
@@ -71,7 +72,7 @@ def play_bingo_round_for_team(team_ID: int) -> None:
                 print_message(message, message_color)
 
                 set_winning_team(team_ID)
-                return
+                return True
         
             continue
 
@@ -84,14 +85,14 @@ def play_bingo_round_for_team(team_ID: int) -> None:
                 print_message(message, message_color)
 
                 set_losing_team(team_ID)
-                return
+                return True
         
             # If the team grabbed a red ball and still has remaining attempts, we end their bingo turn early
             if attempt != max_grab_attempts:
                 message = f"Team {team_ID + 1} grabbed a red ball and ends their bingo turn early!"
                 message_color = "red"
                 print_message(message, message_color)
-                return
+                return False
 
             continue
         
@@ -103,4 +104,4 @@ def play_bingo_round_for_team(team_ID: int) -> None:
             print_message(message, message_color)
 
             set_winning_team(team_ID)
-            return
+            return True

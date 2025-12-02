@@ -20,9 +20,10 @@ def ask_wordle_word_guess(attempt_number: int, team_ID: int) -> str:
         message_color = "red"
         print_message(message, message_color)
 
-def play_wordle_round_for_team(team_ID: int) -> None:
+def play_wordle_round_for_team(team_ID: int) -> bool:
     """
         Play a single Wordle round for the specified team.
+        We return a boolean which indicates if the team has won or lost the Wordle game.
     """
 
     wordle_win_conditions = get_wordle_win_conditions()
@@ -38,6 +39,7 @@ def play_wordle_round_for_team(team_ID: int) -> None:
     print_wordle_round_for_team(team_ID)
 
     max_attempts = get_max_wordle_guess_attempts()
+
     for current_attempt in range(max_attempts):
         print_wordle_board_for_team(team_ID)
         
@@ -48,6 +50,8 @@ def play_wordle_round_for_team(team_ID: int) -> None:
         add_guess_to_current_round_for_team(team_ID, guess, current_attempt)
 
         if guess == word_to_guess:
+            # Since we return early if the team has guessed the word correctly,
+            # we print the Wordle board for the team again to show their correct guess
             print_wordle_board_for_team(team_ID)
 
             message = f"Team {team_ID + 1} guessed the word '{word_to_guess}' correctly!"
@@ -63,21 +67,22 @@ def play_wordle_round_for_team(team_ID: int) -> None:
                 # Set the team that has won the Lingo game as the current team
                 set_winning_team(team_ID)
 
-            return
+                return True
+            
+            return False
     
+    # After all attempts have been used, we print the final Wordle board for the team
+    print_wordle_board_for_team(team_ID)
+
     # If the team has lost the required number of Wordle rounds in a row to lose the Wordle game, we print the lose message, set the current team as the losing team, and return False
     if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= wordle_lose_conditions["rounds_lost_in_a_row"]:
-        print_wordle_board_for_team(team_ID)
-
         message = f"Team {team_ID + 1} has lost {wordle_lose_conditions['rounds_lost_in_a_row']} Wordle rounds in a row and loses the Wordle game!"
         message_color = "red"
         print_message(message, message_color)
 
         set_losing_team(team_ID)
         
-        return
-
-    print_wordle_board_for_team(team_ID)
+        return True
 
     # If the team has used all their attempts without guessing the word, 
     # but hasn't lost the required number of rounds in a row yet,
@@ -85,6 +90,8 @@ def play_wordle_round_for_team(team_ID: int) -> None:
     message = f"Team {team_ID + 1} failed to guess the word within the maximum attempts. The correct word was '{word_to_guess}'."
     message_color = "red"
     print_message(message, message_color)
+
+    return False
 
 def print_wordle_round_for_team(team_ID: int) -> None:
     """
