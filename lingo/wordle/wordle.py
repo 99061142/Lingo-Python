@@ -1,5 +1,5 @@
 from .wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts, get_wordle_win_conditions, get_wordle_lose_conditions
-from ..lingo_utils import get_next_team_ID, print_message, set_winning_team
+from ..lingo_utils import print_message, set_losing_team, set_winning_team
 from .wordle_utils import *
 
 def ask_wordle_word_guess(attempt_number: int, team_ID: int) -> str:
@@ -65,7 +65,7 @@ def play_wordle_round_for_team(team_ID: int) -> None:
 
             return
     
-    # If the team has lost the required number of Wordle rounds in a row to lose the Wordle game, we print the lose message, set the other team as the winning team, and return False
+    # If the team has lost the required number of Wordle rounds in a row to lose the Wordle game, we print the lose message, set the current team as the losing team, and return False
     if amount_of_wordle_rounds_lost_in_a_row_by_team(team_ID) >= wordle_lose_conditions["rounds_lost_in_a_row"]:
         print_wordle_board_for_team(team_ID)
 
@@ -73,9 +73,7 @@ def play_wordle_round_for_team(team_ID: int) -> None:
         message_color = "red"
         print_message(message, message_color)
 
-        # Set the team that has won the Lingo game as the other team
-        next_team_ID = get_next_team_ID(team_ID)
-        set_winning_team(next_team_ID)
+        set_losing_team(team_ID)
         
         return
 
