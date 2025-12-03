@@ -184,26 +184,37 @@ def get_guess_letters_color_based_on_word_to_guess(guess: str, word_to_guess: st
     
     wordle_guess_colors = get_available_letter_position_colors()
     
+    # Create a list with None values to hold the colors for each letter in the guess
     guess_colors = [None] * len(guess)
+
+    # Create a list which holds all letters of the word to guess.
+    #! This is needed since we would overwrite letters in the list when the letter on that position is correct
     word_to_guess_letters = list(word_to_guess)
     
-    # First handle the correct positioned letters
+    # We first check for any correct positioned letters
+    # If a letter is on the correct position, we set its color to the correct position color and remove the letter from the word_to_guess_letters list
     for index, letter in enumerate(guess):
         if letter == word_to_guess_letters[index]:
             guess_colors[index] = wordle_guess_colors["correct"]
             word_to_guess_letters[index] = ""
     
-    # After we handle the correct positioned letters, we handle the misplaced and incorrect letters
+    # After we found all correct positioned letters, we check for misplaced and incorrect letters
+    # If a letter is in the word but on the wrong position, we set its color to the misplaced color and remove the first occurrence of that letter from the word_to_guess_letters list
+    # If a letter is not in the word at all, we set its color to the incorrect color
     for index, letter in enumerate(guess):
+        # If the letter's color has already been set, it means it is on the correct position.
+        # Since we handled the correct positioned letters in the previous loop, we skip this letter
         if guess_colors[index] is not None:
             continue
         
+        # If the letter is still in the list of letters in the word to guess, it means it is misplaced
         if letter in word_to_guess_letters:
             guess_colors[index] = wordle_guess_colors["misplaced"]
-            first_occurrence_index = word_to_guess_letters.index(letter)
-            word_to_guess_letters[first_occurrence_index] = ""
+            letter_index = word_to_guess_letters.index(letter)
+            word_to_guess_letters[letter_index] = ""
             continue
-
+        
+        # If the letter is not in the word to guess, we set its color to the incorrect color
         guess_colors[index] = wordle_guess_colors["incorrect"]
     
     return guess_colors
