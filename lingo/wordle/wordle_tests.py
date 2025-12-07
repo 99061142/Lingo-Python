@@ -1,7 +1,8 @@
+from random import choice
 from test_lib import test
 from ..teams_data import teams_data
 from ..lingo_utils import initialize_teams_data, remove_teams_data
-from ..lingo_settings.lingo_settings_utils import get_starting_team_ID, get_amount_of_teams
+from ..lingo_settings.lingo_settings_utils import get_starting_team_ID
 from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
 from ..wordle.wordle_utils import *
 
@@ -246,84 +247,6 @@ def test_get_current_wordle_round_guesses_by_team() -> None:
     # Remove the teams data after the test to reset the state for other tests
     remove_teams_data()
 test_get_current_wordle_round_guesses_by_team()
-
-def test_get_used_wordle_words() -> None:
-    """
-        Test whether the function which returns a set of all used Wordle words across all teams and rounds works correctly.
-    """
-
-    # First we initialize the teams data to ensure we have the rounds to work with.
-    # This is needed since the function being tested relies on there being rounds for the teams
-    initialize_teams_data()
-        
-    team_amount = get_amount_of_teams()
-
-    used_words = set()
-
-    # We add multiple rounds for each team and keep track of the words which the team needs to guess
-    for team_ID in range(team_amount):
-        for _ in range(2):
-            add_single_initial_rounds_info_for_team(team_ID)
-            word_to_guess = teams_data[team_ID]["roundsInfo"][-1]["wordToGuess"]
-            used_words.add(word_to_guess)
-
-    # Test that the function returns the correct set of used Wordle words across all teams and rounds
-    result_used_words = get_used_wordle_words()
-    test(
-        "The function should return the correct set of used Wordle words across all teams and rounds.",
-        used_words,
-        result_used_words,
-    )
-
-    # Remove the teams data after the test to reset the state for other tests
-    remove_teams_data()
-test_get_used_wordle_words()
-
-def test_get_random_word() -> None:
-    """
-        Test whether the function which returns a random Wordle word that hasn't been used yet works correctly.
-    """
-
-    # First we initialize the teams data to ensure we have the rounds to work with.
-    # This is needed since the function being tested relies on there being used words
-    initialize_teams_data()
-        
-    team_ID = get_starting_team_ID()
-
-    # Add a single round to simulate that a random word has been used
-    add_single_initial_rounds_info_for_team(team_ID)
-    word_to_guess = get_current_wordle_round_word_to_guess_for_team(team_ID)
-
-
-    # Test whether the function returns a random word that hasn't been used yet without raising an exception
-    test_message = "The function should return a random Wordle word that hasnt been used yet without raising an exception."
-    try:
-        get_random_word()
-        test(
-            test_message,
-            True,
-            True
-        )
-    except IndexError as e:
-        test(
-            test_message,
-            False,
-            True
-        )
-
-    # Test whether the function raises an IndexError when all available words have been used
-    try:
-        get_random_word([word_to_guess])
-    except IndexError:
-        test(
-            "The function should raise an IndexError when all available Wordle words have been used.",
-            True,
-            True
-        )
-
-    # Remove the teams data after the test to reset the state for other tests
-    remove_teams_data()
-test_get_random_word()
 
 def test_get_current_wordle_round_guesses_color_for_team() -> None:
     """

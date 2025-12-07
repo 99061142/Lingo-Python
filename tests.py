@@ -12,5 +12,9 @@ import lingo.wordle.wordle_tests
 #! This import runs all the tests for the Bingo minigame
 import lingo.bingo.bingo_tests
 
+#! Do NOT DELETE THIS IMPORT, EVEN IF PYLANCE SAYS IT IS UNUSED.
+#! This import runs all the tests for the Wordle words utility functions
+import lingo.wordle.words.words_tests
+
 # Report all test results for this application
 report()

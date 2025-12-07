@@ -1,9 +1,8 @@
-from random import choice
 from termcolor import colored
+from lingo.wordle.words.words_utils import get_random_word
 from ..teams_data import teams_data
 from .words import five_letter_words
 from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
-from ..lingo_settings.lingo_settings_utils import get_amount_of_teams
 from .wordle_settings.wordle_settings_utils import get_max_wordle_guess_attempts, get_empty_column_placeholder_for_wordle_board, get_available_letter_position_colors, get_wordle_lose_conditions, get_wordle_win_conditions
 
 ###
@@ -116,42 +115,6 @@ def get_current_wordle_round_guesses_by_team(team_ID: int) -> int:
     current_wordle_round = get_current_wordle_round_for_team(team_ID)
     guesses = current_wordle_round["guesses"]
     return guesses
-
-def get_used_wordle_words() -> set:
-    """
-        Return a set of all used Wordle words across all teams and rounds.
-    """
-    
-    used_wordle_words = set()
-    
-    # If the teams data is empty, we return an empty set
-    if len(teams_data) == 0:
-        return used_wordle_words
-    
-    teams_amount = get_amount_of_teams()
-    for team_ID in range(teams_amount):
-        teamData = teams_data[team_ID]
-        roundsInfo = teamData["roundsInfo"]
-        for round_info in roundsInfo:
-            word_to_guess = round_info["wordToGuess"]
-            used_wordle_words.add(word_to_guess)
-    return used_wordle_words
-
-"""
-    Return a random word within the available words we can use for the Wordle game.
-    If all words have been used, we raise an IndexError.
-"""
-def get_random_word(words: list = five_letter_words.words) -> str:
-    used_wordle_words = get_used_wordle_words()
-
-    # If all words have been used, we raise an IndexError
-    if len(used_wordle_words) >= len(words):
-        raise IndexError("All available Wordle words have been used.")
-
-    while True:
-        word = choice(words)
-        if word not in used_wordle_words:
-            return word
 
 def get_current_wordle_round_guesses_color_for_team(team_ID: int) -> list:
     """
