@@ -12,7 +12,6 @@ def main() -> None:
         want_to_keep_playing = ask_to_play_again()
     
     print_message("Thanks for playing the game!")
-    exit(0)
 
 if __name__ == "__main__":
     main()
