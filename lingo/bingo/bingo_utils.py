@@ -5,9 +5,11 @@ from .bingo_settings.bingo_settings_utils import get_bingo_board_size, get_bingo
 from ..lingo_constants import GAP_BETWEEN_BOARD_COLUMNS
 from ..teams_data import teams_data
 
+
 ###
 ### GETTERS
 ###
+
 
 def get_even_numbers_list_from_range(start: int, end: int) -> List[int]:
     """
