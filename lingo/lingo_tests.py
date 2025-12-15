@@ -191,7 +191,7 @@ def test_remove_teams_data() -> None:
     )
 test_remove_teams_data()
 
-def test_initialize_teams_data_function() -> None:
+def test_initialize_teams_data() -> None:
     """
         Test whether the initialize_teams_data function correctly initializes the teams data.
     """
@@ -210,7 +210,7 @@ def test_initialize_teams_data_function() -> None:
 
     # Remove the teams data after the test to reset the state for other tests
     remove_teams_data()
-test_initialize_teams_data_function()
+test_initialize_teams_data()
 
 def test_setting_winning_team() -> None:
     """
